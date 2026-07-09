@@ -5,7 +5,7 @@ export default function ShipUpgrades({ state, onBuyUpgrade }) {
   return (
     <section className="panel upgrades-panel">
       <div className="panel-header">
-        <h2>Ship Upgrades</h2>
+        <h2>⚙️ Ship Upgrades</h2>
         <span className="badge muted-badge">Permanent</span>
       </div>
 
@@ -47,7 +47,7 @@ export default function ShipUpgrades({ state, onBuyUpgrade }) {
                       : `Need ${fmt(cost)} credits`
                 }
               >
-                {maxed ? 'Maxed' : `${fmt(cost)} cr`}
+                {maxed ? '✅ Maxed' : `⬆️ ${fmt(cost)} cr`}
               </button>
             </li>
           );

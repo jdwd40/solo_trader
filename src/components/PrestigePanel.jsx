@@ -21,7 +21,7 @@ export default function PrestigePanel({ gained = 0, onChanged }) {
 
   return (
     <div className="prestige-panel">
-      <h3>Prestige / New Game+</h3>
+      <h3>✨ Prestige / New Game+</h3>
       {gained > 0 ? (
         <p className="prestige-gain">
           +{gained} prestige point{gained === 1 ? '' : 's'} from this run
@@ -51,7 +51,7 @@ export default function PrestigePanel({ gained = 0, onChanged }) {
                 disabled={maxed || cost == null || meta.points < cost}
                 onClick={() => buy(u.id)}
               >
-                {maxed ? 'Max' : `${cost} pt`}
+                {maxed ? '✅ Max' : `✨ ${cost} pt`}
               </button>
             </li>
           );

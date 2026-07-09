@@ -18,7 +18,7 @@ export default function LocationView({ planet }) {
           <span className="icon-label" aria-hidden="true">
             {icon}
           </span>{' '}
-          Dock view
+          🪟 Dock view
         </h2>
         <span className="badge">{planet}</span>
       </div>

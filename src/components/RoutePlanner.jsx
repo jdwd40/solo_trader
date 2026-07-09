@@ -37,7 +37,7 @@ export default function RoutePlanner({ state, onSaveRoute, onNextHop }) {
   return (
     <section className="panel route-panel">
       <div className="panel-header">
-        <h2>Trade Route</h2>
+        <h2>🗺️ Trade Route</h2>
         <span className="badge muted-badge">{fuelCost} fuel / hop</span>
       </div>
 
@@ -79,7 +79,7 @@ export default function RoutePlanner({ state, onSaveRoute, onNextHop }) {
           disabled={!draft.length}
           onClick={removeLast}
         >
-          Undo stop
+          ↩️ Undo stop
         </button>
         <button
           type="button"
@@ -87,7 +87,7 @@ export default function RoutePlanner({ state, onSaveRoute, onNextHop }) {
           disabled={!draft.length}
           onClick={clearDraft}
         >
-          Clear
+          🗑️ Clear
         </button>
         <button
           type="button"
@@ -95,13 +95,13 @@ export default function RoutePlanner({ state, onSaveRoute, onNextHop }) {
           disabled={state.gameOver || draft.length < 1}
           onClick={() => onSaveRoute(draft)}
         >
-          Save route
+          💾 Save route
         </button>
       </div>
 
       {(state.route || []).length > 0 && (
         <div className="route-saved">
-          <strong>Active route</strong>
+          <strong>📍 Active route</strong>
           <span className="muted">
             {(state.route || []).map((p, i) => (
               <span key={`${p}-${i}`}>
@@ -121,7 +121,7 @@ export default function RoutePlanner({ state, onSaveRoute, onNextHop }) {
             disabled={state.gameOver || state.fuel < fuelCost}
             onClick={onNextHop}
           >
-            Next hop
+            🚀 Next hop
           </button>
         </div>
       )}

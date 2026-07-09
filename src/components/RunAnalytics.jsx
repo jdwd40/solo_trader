@@ -7,34 +7,34 @@ export default function RunAnalytics({ analytics }) {
 
   return (
     <div className="run-analytics">
-      <h3>Post-run analytics</h3>
+      <h3>📊 Post-run analytics</h3>
       <dl className="stats-grid">
         <div>
-          <dt>Net gain</dt>
+          <dt>💹 Net gain</dt>
           <dd className={analytics.totalGain >= 0 ? '' : 'debt'}>
             {fmt(analytics.totalGain)}
           </dd>
         </div>
         <div>
-          <dt>Jumps</dt>
+          <dt>🚀 Jumps</dt>
           <dd>{analytics.jumps}</dd>
         </div>
         <div>
-          <dt>Best sale</dt>
+          <dt>💵 Best sale</dt>
           <dd>{fmt(analytics.bestSale)}</dd>
         </div>
         <div>
-          <dt>Stock P&amp;L</dt>
+          <dt>📈 Stock P&amp;L</dt>
           <dd className={analytics.stockPnL >= 0 ? '' : 'debt'}>
             {fmt(analytics.stockPnL)}
           </dd>
         </div>
         <div>
-          <dt>Rival scoops</dt>
+          <dt>🛰️ Rival scoops</dt>
           <dd>{analytics.rivalWins}</dd>
         </div>
         <div>
-          <dt>Hot planet</dt>
+          <dt>🪐 Hot planet</dt>
           <dd>
             {analytics.bestPlanet
               ? `${analytics.bestPlanet.planet} (${analytics.bestPlanet.visits})`
@@ -49,7 +49,7 @@ export default function RunAnalytics({ analytics }) {
 
       {top.length > 0 ? (
         <>
-          <h4 className="subhead">Commodity P&amp;L</h4>
+          <h4 className="subhead">📦 Commodity P&amp;L</h4>
           <ul className="analytics-bars">
             {top.map((row) => (
               <li key={row.commodity}>

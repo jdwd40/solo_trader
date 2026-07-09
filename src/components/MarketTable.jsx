@@ -42,7 +42,7 @@ export default function MarketTable({ state, onBuy, onSell }) {
   return (
     <section className="panel market-panel" data-tutorial="market">
       <div className="panel-header">
-        <h2>Market — {state.currentPlanet}</h2>
+        <h2>🛒 Market — {state.currentPlanet}</h2>
         <span className="badge muted-badge">Legal goods</span>
       </div>
 
@@ -50,8 +50,8 @@ export default function MarketTable({ state, onBuy, onSell }) {
         <div className="demand-banner">
           {demands.map((d) => (
             <span key={d.id} className={`demand-chip ${d.type}`}>
-              {d.type === 'shortage' ? 'Shortage' : 'Surplus'}: {d.commodity} (
-              {d.turnsLeft}t)
+              {d.type === 'shortage' ? '📈 Shortage' : '📉 Surplus'}:{' '}
+              {d.commodity} ({d.turnsLeft}t)
             </span>
           ))}
         </div>
@@ -61,13 +61,13 @@ export default function MarketTable({ state, onBuy, onSell }) {
         <table className="market-table">
           <thead>
             <tr>
-              <th>Commodity</th>
-              <th>Price</th>
-              <th>Trend</th>
-              <th>Owned</th>
-              <th>Qty</th>
-              <th>Buy</th>
-              <th>Sell</th>
+              <th>📦 Commodity</th>
+              <th>💰 Price</th>
+              <th>📉 Trend</th>
+              <th>📦 Owned</th>
+              <th>#️⃣ Qty</th>
+              <th>➕ Buy</th>
+              <th>➖ Sell</th>
             </tr>
           </thead>
           <tbody>
@@ -119,7 +119,7 @@ export default function MarketTable({ state, onBuy, onSell }) {
                         }
                         onClick={() => onBuy(commodity, qty)}
                       >
-                        Buy
+                        ➕ Buy
                       </button>
                       <button
                         type="button"
@@ -137,7 +137,7 @@ export default function MarketTable({ state, onBuy, onSell }) {
                           }
                         }}
                       >
-                        Max
+                        ⏫ Max
                       </button>
                     </div>
                   </td>
@@ -154,7 +154,7 @@ export default function MarketTable({ state, onBuy, onSell }) {
                         }
                         onClick={() => onSell(commodity, qty)}
                       >
-                        Sell
+                        ➖ Sell
                       </button>
                       <button
                         type="button"
@@ -168,7 +168,7 @@ export default function MarketTable({ state, onBuy, onSell }) {
                           }
                         }}
                       >
-                        All
+                        ⏬ All
                       </button>
                     </div>
                   </td>

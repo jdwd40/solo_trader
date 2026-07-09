@@ -7,7 +7,7 @@ export default function PirateMap({ state }) {
   return (
     <section className="panel pirate-panel">
       <div className="panel-header">
-        <h2>Pirate Pressure</h2>
+        <h2>☠️ Pirate Pressure</h2>
         <span className="badge muted-badge">Dynamic</span>
       </div>
       <p className="muted intel-blurb">

@@ -15,7 +15,7 @@ export default function MarketIntel({ state, onBuyIntel }) {
   return (
     <section className="panel intel-panel">
       <div className="panel-header">
-        <h2>Market Intel</h2>
+        <h2>📡 Market Intel</h2>
         <span className={`badge ${active ? '' : 'muted-badge'}`}>
           {active ? 'Active' : `${fmt(INTEL_COST)} cr`}
         </span>
@@ -32,12 +32,12 @@ export default function MarketIntel({ state, onBuyIntel }) {
           disabled={state.gameOver || state.credits < INTEL_COST}
           onClick={onBuyIntel}
         >
-          Buy Intel ({fmt(INTEL_COST)} cr)
+          📡 Buy Intel ({fmt(INTEL_COST)} cr)
         </button>
       ) : (
         <>
           <div className="intel-focus">
-            <label htmlFor="intel-commodity">Commodity</label>
+            <label htmlFor="intel-commodity">📦 Commodity</label>
             <select
               id="intel-commodity"
               value={focus}

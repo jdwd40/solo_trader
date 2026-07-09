@@ -4,7 +4,7 @@ export default function NewsTicker({ news }) {
 
   return (
     <div className="news-ticker" role="status" aria-live="polite">
-      <span className="news-label">News</span>
+      <span className="news-label">📰 News</span>
       <div className="news-track">
         {items.slice(0, 6).map((n, i) => (
           <span key={`${i}-${n.slice(0, 12)}`} className="news-item">

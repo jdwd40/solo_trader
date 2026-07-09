@@ -6,7 +6,7 @@ export default function RivalPanel({ rival }) {
   return (
     <section className="panel rival-panel">
       <div className="panel-header">
-        <h2>Sector Rival</h2>
+        <h2>🛰️ Sector Rival</h2>
         <span className="badge muted-badge">NPC</span>
       </div>
       <p className="rival-name">
@@ -14,11 +14,11 @@ export default function RivalPanel({ rival }) {
       </p>
       <ul className="rival-stats">
         <li>
-          <span className="muted">Last seen</span>
+          <span className="muted">📍 Last seen</span>
           <strong>{rival.planet}</strong>
         </li>
         <li>
-          <span className="muted">Est. capital</span>
+          <span className="muted">💰 Est. capital</span>
           <strong>{fmt(rival.credits)} cr</strong>
         </li>
       </ul>

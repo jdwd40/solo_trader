@@ -22,7 +22,7 @@ export default function FuturesPanel({ state, onOpen, onSettle }) {
   return (
     <section className="panel futures-panel">
       <div className="panel-header">
-        <h2>Futures</h2>
+        <h2>📑 Futures</h2>
         <span className="badge muted-badge">
           {openCount}/{MAX_FUTURES} · {FUTURES_DURATION} jumps
         </span>
@@ -62,7 +62,7 @@ export default function FuturesPanel({ state, onOpen, onSettle }) {
           onClick={() => onOpen(commodity, safeQty)}
           title={`Lock ${safeQty} @ ${fmt(price)} · fee ${fmt(fee)}`}
         >
-          Open ({fmt(fee)})
+          📑 Open ({fmt(fee)})
         </button>
       </div>
       <p className="futures-hint muted">
@@ -98,7 +98,7 @@ export default function FuturesPanel({ state, onOpen, onSettle }) {
                       : 'Need cargo to settle'
                   }
                 >
-                  Settle
+                  ✅ Settle
                 </button>
               </li>
             );

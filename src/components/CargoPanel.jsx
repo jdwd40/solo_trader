@@ -11,7 +11,7 @@ export default function CargoPanel({ state }) {
   return (
     <section className="panel cargo-panel">
       <div className="panel-header">
-        <h2>Cargo Hold</h2>
+        <h2>📦 Cargo Hold</h2>
         <span className="badge">
           {used} / {state.cargoCapacity}
         </span>
@@ -43,7 +43,7 @@ export default function CargoPanel({ state }) {
       )}
 
       <div className="cargo-footer">
-        <span>Market value</span>
+        <span>💵 Market value</span>
         <strong>{fmt(value)} cr</strong>
       </div>
     </section>

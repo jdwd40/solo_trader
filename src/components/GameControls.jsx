@@ -19,33 +19,35 @@ export default function GameControls({
   return (
     <section className="panel controls-panel">
       <div className="panel-header">
-        <h2>Game</h2>
+        <h2>🎮 Game</h2>
         <span className="badge muted-badge">
-          {runMode === 'daily' ? `Daily ${rngSeed || dailySeedKey()}` : 'Classic'}
+          {runMode === 'daily'
+            ? `📅 Daily ${rngSeed || dailySeedKey()}`
+            : '🎲 Classic'}
         </span>
       </div>
       <div className="controls-row">
         <button type="button" className="btn btn-secondary" onClick={onNewGame}>
-          New Classic
+          🎲 New Classic
         </button>
         <button type="button" className="btn btn-fuel" onClick={onNewDaily}>
-          New Daily
+          📅 New Daily
         </button>
         <button type="button" className="btn btn-secondary" onClick={onSave}>
-          Save
+          💾 Save
         </button>
         <button type="button" className="btn btn-secondary" onClick={onLoad}>
-          Load
+          📂 Load
         </button>
         <button type="button" className="btn btn-secondary" onClick={onExport}>
-          Export
+          📤 Export
         </button>
         <button
           type="button"
           className="btn btn-secondary"
           onClick={() => fileRef.current?.click()}
         >
-          Import
+          📥 Import
         </button>
         <input
           ref={fileRef}
@@ -63,14 +65,14 @@ export default function GameControls({
           className="btn btn-secondary"
           onClick={onSwitchHull}
         >
-          Hull
+          🛸 Hull
         </button>
         <button
           type="button"
           className="btn btn-secondary"
           onClick={onReplayTutorial}
         >
-          Tutorial
+          🎓 Tutorial
         </button>
       </div>
       {message ? <p className="control-message">{message}</p> : null}

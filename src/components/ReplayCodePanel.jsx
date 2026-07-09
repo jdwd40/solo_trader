@@ -14,7 +14,7 @@ export default function ReplayCodePanel({ code, onCopy }) {
 
   return (
     <div className="replay-panel">
-      <h3>Replay / verify code</h3>
+      <h3>🔐 Replay / verify code</h3>
       {code ? (
         <>
           <p className="muted" style={{ fontSize: '0.82rem' }}>
@@ -31,7 +31,7 @@ export default function ReplayCodePanel({ code, onCopy }) {
               onCopy?.();
             }}
           >
-            Copy code
+            📋 Copy code
           </button>
         </>
       ) : null}
@@ -44,7 +44,7 @@ export default function ReplayCodePanel({ code, onCopy }) {
           onChange={(e) => setInput(e.target.value)}
         />
         <button type="button" className="btn btn-secondary btn-xs" onClick={verify}>
-          Verify
+          🔍 Verify
         </button>
       </div>
       {result ? (

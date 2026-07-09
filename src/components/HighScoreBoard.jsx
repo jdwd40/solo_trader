@@ -4,7 +4,7 @@ export default function HighScoreBoard({ scores }) {
   return (
     <section className="panel highscore-panel">
       <div className="panel-header">
-        <h2>High Scores</h2>
+        <h2>🏆 High Scores</h2>
         <span className="badge muted-badge">Local</span>
       </div>
 

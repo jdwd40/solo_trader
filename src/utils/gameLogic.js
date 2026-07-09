@@ -266,7 +266,47 @@ export function initStockPrices() {
 }
 
 /**
- * Move stock indices with season + mild noise each jump.
+ * Half-spread in credits (each side of mid).
+ * Buying takes the ask (mid + half). Selling hits the bid (mid − half).
+ */
+export function marketHalfSpread(mid, season, indexId) {
+  const def = STOCK_INDICES[indexId];
+  let bps = 0.022; // ~2.2% per side
+  if (season?.mods && def) {
+    let pull = 0;
+    let n = 0;
+    for (const c of def.commodities) {
+      if (season.mods[c] != null) {
+        pull += Math.abs(season.mods[c] - 1);
+        n += 1;
+      }
+    }
+    if (n > 0) bps += (pull / n) * 0.04; // season stress widens the book
+  }
+  return Math.max(2, Math.round((mid || 100) * bps));
+}
+
+/** Full top-of-book quote for an index. mid is last/fair; bid < mid < ask. */
+export function marketBook(mid, season, indexId) {
+  const m = Math.max(20, Math.round(mid || STOCK_INDICES[indexId]?.base || 100));
+  const half = marketHalfSpread(m, season, indexId);
+  const bid = Math.max(1, m - half);
+  const ask = m + half;
+  return { mid: m, half, bid, ask, spread: ask - bid };
+}
+
+/**
+ * Aggressive trade walks the mid (inventory / impact).
+ * side: 'buy' (took ask) or 'sell' (hit bid).
+ */
+export function applyTradeImpact(mid, side, shares) {
+  const impact = Math.min(10, Math.max(1, Math.round(shares * 0.2)));
+  if (side === 'buy') return Math.round(mid) + impact;
+  return Math.max(20, Math.round(mid) - impact);
+}
+
+/**
+ * Move stock mid prices with season + mild noise each jump.
  */
 export function tickStockPrices(stockPrices, season) {
   const next = { ...stockPrices };
@@ -291,6 +331,123 @@ export function tickStockPrices(stockPrices, season) {
     next[id] = Math.max(20, Math.round((next[id] || def.base) * factor));
   }
   return next;
+}
+
+/**
+ * After mids move, other traders may trade against the player's resting quotes.
+ * Making a 2-way market: you post bid size + ask size; flow decides which side fills.
+ * Adverse selection: when mid rose, your ask is more likely to be taken (you sell low);
+ * when mid fell, your bid is more likely to be hit (you buy high).
+ *
+ * @returns {{ state: object, messages: string[] }}
+ */
+export function settleStockQuotes(state, prevMids, nextMids) {
+  const quotes = { ...(state.stockQuotes || {}) };
+  let credits = state.credits;
+  let portfolio = { ...(state.portfolio || {}) };
+  let stats = { ...(state.stats || {}) };
+  const messages = [];
+  let anyFill = false;
+
+  for (const id of Object.keys(STOCK_INDICES)) {
+    const q = quotes[id];
+    if (!q) continue;
+    let bidSize = Math.max(0, Math.floor(q.bidSize || 0));
+    let askSize = Math.max(0, Math.floor(q.askSize || 0));
+    if (bidSize <= 0 && askSize <= 0) {
+      quotes[id] = null;
+      continue;
+    }
+
+    const prevMid = prevMids?.[id] ?? nextMids?.[id] ?? STOCK_INDICES[id].base;
+    const nextMid = nextMids?.[id] ?? prevMid;
+    // Fills print at the book that was live during the jump (prior mid).
+    const book = marketBook(prevMid, state.season, id);
+    const move = (nextMid - prevMid) / Math.max(1, prevMid);
+
+    // Uninformed flow base + adverse selection from mid move.
+    let bidFillChance = 0.32 + randRange(-0.08, 0.08) - move * 1.1;
+    let askFillChance = 0.32 + randRange(-0.08, 0.08) + move * 1.1;
+    bidFillChance = Math.min(0.85, Math.max(0.05, bidFillChance));
+    askFillChance = Math.min(0.85, Math.max(0.05, askFillChance));
+
+    // Ask fills first if mid rose (momentum buyers take your offer).
+    const order = move >= 0 ? ['ask', 'bid'] : ['bid', 'ask'];
+
+    for (const side of order) {
+      if (side === 'ask' && askSize > 0 && rng() < askFillChance) {
+        const owned = portfolio[id] || 0;
+        const fill = Math.min(
+          askSize,
+          owned,
+          Math.max(1, Math.floor(askSize * randRange(0.35, 1)))
+        );
+        if (fill > 0 && owned >= fill) {
+          const revenue = book.ask * fill;
+          portfolio[id] = owned - fill;
+          credits += revenue;
+          askSize -= fill;
+          stats = {
+            ...stats,
+            stockTrades: (stats.stockTrades || 0) + 1,
+            stockEarned: (stats.stockEarned || 0) + revenue,
+            mmFills: (stats.mmFills || 0) + 1,
+            mmEarned: (stats.mmEarned || 0) + revenue,
+          };
+          anyFill = true;
+          messages.push(
+            `📤 Quote filled: sold ${fill} ${STOCK_INDICES[id].name} @ ask ${book.ask} (+${revenue.toLocaleString()} cr).`
+          );
+        }
+      }
+      if (side === 'bid' && bidSize > 0 && rng() < bidFillChance) {
+        const want = Math.min(
+          bidSize,
+          Math.max(1, Math.floor(bidSize * randRange(0.35, 1)))
+        );
+        const affordable = Math.floor(credits / book.bid);
+        const fill = Math.min(want, affordable);
+        if (fill > 0) {
+          const cost = book.bid * fill;
+          portfolio[id] = (portfolio[id] || 0) + fill;
+          credits -= cost;
+          bidSize -= fill;
+          stats = {
+            ...stats,
+            stockTrades: (stats.stockTrades || 0) + 1,
+            stockSpent: (stats.stockSpent || 0) + cost,
+            mmFills: (stats.mmFills || 0) + 1,
+            mmSpent: (stats.mmSpent || 0) + cost,
+          };
+          anyFill = true;
+          messages.push(
+            `📥 Quote filled: bought ${fill} ${STOCK_INDICES[id].name} @ bid ${book.bid} (−${cost.toLocaleString()} cr).`
+          );
+        }
+      }
+    }
+
+    if (bidSize <= 0 && askSize <= 0) {
+      quotes[id] = null;
+    } else {
+      quotes[id] = { bidSize, askSize };
+    }
+  }
+
+  if (!anyFill && !messages.length) {
+    return { state, messages: [] };
+  }
+
+  return {
+    state: {
+      ...state,
+      credits,
+      portfolio,
+      stats,
+      stockQuotes: quotes,
+    },
+    messages,
+  };
 }
 
 export function crewWageTotal(crew) {

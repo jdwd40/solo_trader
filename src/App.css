@@ -1363,10 +1363,11 @@ body.theme-high-contrast .app-bg-veil {
 .season-banner {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 0.75rem 1.25rem;
   margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.85rem;
   background: linear-gradient(
     90deg,
     rgba(123, 108, 255, 0.12),
@@ -1374,6 +1375,30 @@ body.theme-high-contrast .app-bg-veil {
   );
   border: 1px solid rgba(123, 108, 255, 0.3);
   border-radius: var(--radius);
+}
+
+.season-thumb-wrap {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(123, 108, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  background: #05080f;
+}
+
+.season-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: location-fade 0.35s ease;
+}
+
+.season-main {
+  flex: 1;
+  min-width: 10rem;
 }
 
 .season-kicker {
@@ -1385,9 +1410,16 @@ body.theme-high-contrast .app-bg-veil {
 }
 
 .season-name {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 1.05rem;
   margin: 0.1rem 0;
+}
+
+.season-icon {
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
 .season-blurb {
@@ -1398,6 +1430,74 @@ body.theme-high-contrast .app-bg-veil {
   text-align: right;
   font-size: 0.82rem;
   color: var(--text-muted);
+}
+
+/* Company strip season chip */
+.company-season-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.3rem;
+  background: rgba(123, 108, 255, 0.12);
+  border: 1px solid rgba(123, 108, 255, 0.28);
+  border-radius: 10px;
+  max-width: 100%;
+}
+
+.company-season-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.company-season-icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.company-season-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.company-season-text .label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.season-chip-name {
+  font-size: 0.78rem !important;
+  font-weight: 600;
+  color: #c4b5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
+}
+
+@media (min-width: 901px) {
+  .season-thumb-wrap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .company-season-thumb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .season-chip-name {
+    max-width: 11rem;
+  }
 }
 
 .season-mods {
@@ -1862,12 +1962,70 @@ body.theme-high-contrast .app-bg-veil {
   border-color: rgba(45, 212, 168, 0.35);
 }
 
+.stock-list li.is-quoting {
+  border-color: rgba(96, 165, 250, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.12);
+}
+
 .crew-list li > div,
-.stock-list li > div:first-child {
+.stock-list li > div:first-child,
+.stock-list .stock-main {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
   min-width: 0;
+  flex: 1;
+}
+
+.stock-qty-row {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+  margin-bottom: 0.55rem;
+}
+
+.stock-book {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.book-bid {
+  color: #6ee7b7;
+}
+
+.book-ask {
+  color: #fca5a5;
+}
+
+.book-mid {
+  color: var(--text-muted, #94a3b8);
+}
+
+.stock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.stock-list li {
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .stock-list li {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stock-actions .quest-actions {
+    flex-wrap: wrap;
+  }
 }
 
 .a11y-list li label {

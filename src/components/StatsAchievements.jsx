@@ -8,33 +8,33 @@ export default function StatsAchievements({ state }) {
   return (
     <section className="panel stats-panel">
       <div className="panel-header">
-        <h2>Stats & Badges</h2>
+        <h2>🏅 Stats & Badges</h2>
         <span className="badge">{state.shipTitle || 'Rookie Hauler'}</span>
       </div>
 
       <dl className="stats-grid">
         <div>
-          <dt>Jumps</dt>
+          <dt>🚀 Jumps</dt>
           <dd>{stats.jumps || 0}</dd>
         </div>
         <div>
-          <dt>Best sale</dt>
+          <dt>💵 Best sale</dt>
           <dd>{fmt(stats.bestSale || 0)}</dd>
         </div>
         <div>
-          <dt>Peak NW</dt>
+          <dt>💎 Peak NW</dt>
           <dd>{fmt(stats.maxNetWorth || 0)}</dd>
         </div>
         <div>
-          <dt>Smuggled</dt>
+          <dt>🕶️ Smuggled</dt>
           <dd>{stats.contrabandSmuggled || 0}</dd>
         </div>
         <div>
-          <dt>Claims</dt>
+          <dt>🛡️ Claims</dt>
           <dd>{stats.insuranceClaims || 0}</dd>
         </div>
         <div>
-          <dt>Bought / sold</dt>
+          <dt>🛒 Bought / sold</dt>
           <dd>
             {stats.unitsBought || 0} / {stats.unitsSold || 0}
           </dd>

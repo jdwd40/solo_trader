@@ -42,14 +42,14 @@ export default function WelcomeScreen({ onContinue, onOpenWiki }) {
 
         <div className="welcome-grid">
           <section className="welcome-block">
-            <h2>Your goal</h2>
+            <h2>🎯 Your goal</h2>
             <p>
               <strong>Net worth</strong> = credits + cargo (and warehouses/stocks)
               − debt. Finish turn 100 with the best score and epilogue you can.
             </p>
           </section>
           <section className="welcome-block">
-            <h2>The loop</h2>
+            <h2>🔄 The loop</h2>
             <ol>
               <li>Check prices and sparklines at your port.</li>
               <li>Buy goods if you have credits and cargo space.</li>
@@ -58,7 +58,7 @@ export default function WelcomeScreen({ onContinue, onOpenWiki }) {
             </ol>
           </section>
           <section className="welcome-block">
-            <h2>Going deeper</h2>
+            <h2>🌌 Going deeper</h2>
             <ul>
               <li>Contracts, stocks, loans, and futures for leverage</li>
               <li>Crew specialists and ship upgrades</li>
@@ -67,7 +67,7 @@ export default function WelcomeScreen({ onContinue, onOpenWiki }) {
             </ul>
           </section>
           <section className="welcome-block">
-            <h2>Before you launch</h2>
+            <h2>🚀 Before you launch</h2>
             <p>
               Next you’ll pick a <strong>difficulty</strong> and a <strong>hull</strong>.
               Need help mid-flight? Open the <strong>Wiki</strong> anytime from the
@@ -78,7 +78,7 @@ export default function WelcomeScreen({ onContinue, onOpenWiki }) {
 
         <div className="welcome-actions">
           <button type="button" className="btn btn-secondary" onClick={onOpenWiki}>
-            Read the wiki
+            📖 Read the wiki
           </button>
           <button
             type="button"
@@ -88,7 +88,7 @@ export default function WelcomeScreen({ onContinue, onOpenWiki }) {
               onContinue();
             }}
           >
-            Continue to launch bay
+            🚀 Continue to launch bay
           </button>
         </div>
       </div>

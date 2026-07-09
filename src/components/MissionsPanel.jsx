@@ -8,7 +8,7 @@ export default function MissionsPanel({ state, onClaim }) {
   return (
     <section className="panel missions-panel">
       <div className="panel-header">
-        <h2>Missions</h2>
+        <h2>🎯 Missions</h2>
         <span className="badge muted-badge">
           {missions.filter((m) => m.claimed).length}/{missions.length}
         </span>
@@ -36,7 +36,7 @@ export default function MissionsPanel({ state, onClaim }) {
                 disabled={!m.claimable || state.gameOver || state.needsHullSelect}
                 onClick={() => onClaim(m.id)}
               >
-                Claim
+                🎁 Claim
               </button>
             </li>
           ))}

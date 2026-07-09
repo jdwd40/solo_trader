@@ -12,7 +12,7 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
   return (
     <section className="panel slots-panel">
       <div className="panel-header">
-        <h2>Save Slots</h2>
+        <h2>💾 Save Slots</h2>
         <span className="badge muted-badge">A–F</span>
       </div>
       <p className="muted intel-blurb">
@@ -55,7 +55,7 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
                   return r;
                 }}
               >
-                Save
+                💾 Save
               </button>
               <button
                 type="button"
@@ -66,7 +66,7 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
                   refresh();
                 }}
               >
-                Load
+                📂 Load
               </button>
               <button
                 type="button"
@@ -77,7 +77,7 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
                   refresh();
                 }}
               >
-                Clear
+                🗑️ Clear
               </button>
             </div>
           </li>

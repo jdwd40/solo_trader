@@ -2,7 +2,7 @@ export default function EventLog({ events }) {
   return (
     <section className="panel event-panel">
       <div className="panel-header">
-        <h2>Event Log</h2>
+        <h2>📜 Event Log</h2>
         <span className="badge muted-badge">Last 10</span>
       </div>
       <ul className="event-list">

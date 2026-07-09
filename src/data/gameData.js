@@ -440,6 +440,8 @@ export const SEASON_CYCLE = [
     duration: 10,
     blurb: 'Farms dump Food & Medicine into the sector.',
     mods: { Food: 0.78, Medicine: 0.9 },
+    icon: '🌾',
+    image: '/seasons/harvest.jpg',
   },
   {
     id: 'festival',
@@ -447,6 +449,8 @@ export const SEASON_CYCLE = [
     duration: 10,
     blurb: 'Luxury demand soars; parties need Electronics.',
     mods: { 'Luxury Goods': 1.28, Electronics: 1.12, Food: 1.08 },
+    icon: '🎉',
+    image: '/seasons/festival.jpg',
   },
   {
     id: 'blockade',
@@ -454,6 +458,8 @@ export const SEASON_CYCLE = [
     duration: 10,
     blurb: 'Ore lanes are choked; raw materials spike.',
     mods: { Ore: 1.38, Electronics: 1.18 },
+    icon: '🚧',
+    image: '/seasons/blockade.jpg',
   },
   {
     id: 'fuelrush',
@@ -461,8 +467,16 @@ export const SEASON_CYCLE = [
     duration: 10,
     blurb: 'Fleets scramble for Fuel Cells — and shadows move Contraband.',
     mods: { 'Fuel Cells': 1.32, Contraband: 1.15 },
+    icon: '⚡',
+    image: '/seasons/fuelrush.jpg',
   },
 ];
+
+/** Lookup season meta (icon + image) by id */
+export function getSeasonMeta(seasonOrId) {
+  const id = typeof seasonOrId === 'string' ? seasonOrId : seasonOrId?.id;
+  return SEASON_CYCLE.find((s) => s.id === id) || SEASON_CYCLE[0];
+}
 
 /**
  * Ship upgrades
@@ -673,6 +687,9 @@ export function emptyStats() {
     pirateEncounters: 0,
     crewHired: 0,
     stockTrades: 0,
+    mmFills: 0,
+    mmSpent: 0,
+    mmEarned: 0,
     // Post-run analytics
     profitByCommodity: {},
     spendByCommodity: {},
@@ -692,6 +709,13 @@ export function emptyCrew() {
 export function emptyPortfolio() {
   return Object.fromEntries(
     Object.keys(STOCK_INDICES).map((id) => [id, 0])
+  );
+}
+
+/** Resting 2-way quotes (null = not making a market on that index). */
+export function emptyStockQuotes() {
+  return Object.fromEntries(
+    Object.keys(STOCK_INDICES).map((id) => [id, null])
   );
 }
 

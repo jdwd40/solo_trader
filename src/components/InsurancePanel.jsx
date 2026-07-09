@@ -7,7 +7,7 @@ export default function InsurancePanel({ state, onBuy }) {
   return (
     <section className="panel insurance-panel">
       <div className="panel-header">
-        <h2>Insurance</h2>
+        <h2>🛡️ Insurance</h2>
         <span className="badge muted-badge">{active.length} active</span>
       </div>
 
@@ -48,7 +48,7 @@ export default function InsurancePanel({ state, onBuy }) {
                 disabled={!canBuy}
                 onClick={() => onBuy(plan.id)}
               >
-                {owned ? 'Renew' : 'Buy'}
+                {owned ? '🔄 Renew' : '🛡️ Buy'}
               </button>
             </li>
           );

@@ -3,7 +3,7 @@ import { useState } from 'react';
 const SECTIONS = [
   {
     id: 'basics',
-    title: 'Basics',
+    title: '📘 Basics',
     body: [
       'You have 100 turns to maximise net worth.',
       'Net worth = credits + ship cargo value + warehouse stock + stocks − debt.',
@@ -13,7 +13,7 @@ const SECTIONS = [
   },
   {
     id: 'trading',
-    title: 'Trading',
+    title: '🛒 Trading',
     body: [
       'Buy only with enough credits and free cargo space.',
       'Sell only goods you own. Use Max / All for speed.',
@@ -24,7 +24,7 @@ const SECTIONS = [
   },
   {
     id: 'travel',
-    title: 'Travel & fuel',
+    title: '🚀 Travel & fuel',
     body: [
       'Travel panel lists all six ports. Current planet is disabled.',
       'Low fuel blocks jumps — buy Fuel Cells or use Fill Tank.',
@@ -34,7 +34,7 @@ const SECTIONS = [
   },
   {
     id: 'events',
-    title: 'Seasons, demand & risk',
+    title: '🌀 Seasons & risk',
     body: [
       'Seasons last ~10 jumps and shift whole commodity classes.',
       'Demand events create shortages (prices up) or surpluses (down).',
@@ -45,18 +45,19 @@ const SECTIONS = [
   },
   {
     id: 'systems',
-    title: 'Systems & leverage',
+    title: '💹 Systems',
     body: [
       'Loans: borrow cash; interest every jump. Repay to restore reputation.',
       'Futures: pay a fee to lock a sale price; settle by delivering cargo.',
-      'Stocks: four sector indices; value counts toward net worth.',
+      'Stocks: bid/ask book. Buy = take the ask. Sell = hit the bid. Spread is the cost of immediacy.',
+      'Make a 2-way market to post both sides; other traders fill you on jumps (earn spread, risk inventory).',
       'Warehouses: unlock storage on a planet; small upkeep while used.',
       'Insurance: covers spoilage, fuel leaks, and/or customs; premiums scale with heat.',
     ],
   },
   {
     id: 'crew-ship',
-    title: 'Crew & hulls',
+    title: '👥 Crew & hulls',
     body: [
       'Bulk Freighter: extra cargo. Shadow Runner: smuggling edge. Fuel Tanker: range.',
       'Navigator: −1 fuel/jump. Broker: +8% legal sales. Gunner: halves pirate losses.',
@@ -66,7 +67,7 @@ const SECTIONS = [
   },
   {
     id: 'modes',
-    title: 'Modes & meta',
+    title: '🎮 Modes & meta',
     body: [
       'Classic: free RNG each run. Daily: shared seed for the UTC day.',
       'Difficulty (Easy / Normal / Hard) locks at launch.',
@@ -77,7 +78,7 @@ const SECTIONS = [
   },
   {
     id: 'tips',
-    title: 'Quick tips',
+    title: '💡 Quick tips',
     body: [
       'Early game: Food/Ore routes, keep fuel above 20, avoid big debt.',
       'Mid game: ride seasons and shortages; contracts pad cash and rep.',
@@ -106,11 +107,11 @@ export default function WikiGuide({ open, onClose }) {
       <div className="wiki-card">
         <header className="wiki-header">
           <div>
-            <p className="wiki-kicker">Field manual</p>
-            <h2 id="wiki-title">Captain’s Wiki</h2>
+            <p className="wiki-kicker">📘 Field manual</p>
+            <h2 id="wiki-title">📖 Captain’s Wiki</h2>
           </div>
           <button type="button" className="btn btn-secondary" onClick={onClose}>
-            Close
+            ✖️ Close
           </button>
         </header>
 

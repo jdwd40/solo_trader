@@ -22,7 +22,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
     return (
       <section className="panel black-market-panel">
         <div className="panel-header">
-          <h2>Black Market</h2>
+          <h2>🕶️ Black Market</h2>
           <span className="badge muted-badge">Closed</span>
         </div>
         <p className="muted intel-blurb">
@@ -43,7 +43,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
   return (
     <section className="panel black-market-panel">
       <div className="panel-header">
-        <h2>Black Market</h2>
+        <h2>🕶️ Black Market</h2>
         <span className="badge">Open</span>
       </div>
 
@@ -53,13 +53,14 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
 
       <div className="bm-stats">
         <span>
-          Price: <strong>{fmt(price)}</strong>
+          💰 Price: <strong>{fmt(price)}</strong>
         </span>
         <span>
-          Owned: <strong>{owned}</strong>
+          📦 Owned: <strong>{owned}</strong>
         </span>
         <span>
-          Jump risk: <strong className={riskPct > 25 ? 'debt' : ''}>{riskPct}%</strong>
+          ⚠️ Jump risk:{' '}
+          <strong className={riskPct > 25 ? 'debt' : ''}>{riskPct}%</strong>
         </span>
       </div>
 
@@ -84,7 +85,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
           }
           onClick={() => onBuy(safeQty)}
         >
-          Buy
+          ➕ Buy
         </button>
         <button
           type="button"
@@ -92,7 +93,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
           disabled={state.gameOver || maxBuy <= 0}
           onClick={() => onBuy(maxBuy)}
         >
-          Max
+          ⏫ Max
         </button>
         <button
           type="button"
@@ -100,7 +101,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
           disabled={state.gameOver || owned < safeQty}
           onClick={() => onSell(safeQty)}
         >
-          Sell
+          ➖ Sell
         </button>
         <button
           type="button"
@@ -108,7 +109,7 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
           disabled={state.gameOver || owned <= 0}
           onClick={() => onSell(owned)}
         >
-          All
+          ⏬ All
         </button>
       </div>
     </section>

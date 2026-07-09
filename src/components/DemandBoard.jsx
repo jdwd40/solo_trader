@@ -6,7 +6,7 @@ export default function DemandBoard({ demandEvents }) {
   return (
     <section className="panel demand-panel">
       <div className="panel-header">
-        <h2>Sector Demand</h2>
+        <h2>📊 Sector Demand</h2>
         <span className="badge muted-badge">{events.length} active</span>
       </div>
 

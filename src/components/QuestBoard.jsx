@@ -12,7 +12,7 @@ export default function QuestBoard({
   return (
     <section className="panel quest-panel">
       <div className="panel-header">
-        <h2>Contracts</h2>
+        <h2>📋 Contracts</h2>
         <span className="badge muted-badge">
           {active.length} active · {board.length} offered
         </span>
@@ -24,7 +24,7 @@ export default function QuestBoard({
 
       {active.length > 0 && (
         <>
-          <h3 className="subhead">Active</h3>
+          <h3 className="subhead">📌 Active</h3>
           <ul className="quest-list">
             {active.map((q) => {
               const here = state.currentPlanet === q.toPlanet;
@@ -47,7 +47,7 @@ export default function QuestBoard({
                       disabled={!canComplete}
                       onClick={() => onComplete(q.id)}
                     >
-                      Deliver
+                      ✅ Deliver
                     </button>
                     <button
                       type="button"
@@ -55,7 +55,7 @@ export default function QuestBoard({
                       disabled={state.gameOver}
                       onClick={() => onAbandon(q.id)}
                     >
-                      Drop
+                      ❌ Drop
                     </button>
                   </div>
                 </li>
@@ -65,7 +65,7 @@ export default function QuestBoard({
         </>
       )}
 
-      <h3 className="subhead">Board</h3>
+      <h3 className="subhead">📋 Board</h3>
       {board.length === 0 ? (
         <p className="muted empty-cargo">No offers. Jump to refresh the board.</p>
       ) : (
@@ -85,7 +85,7 @@ export default function QuestBoard({
                 disabled={state.gameOver || (state.quests || []).length >= 2}
                 onClick={() => onAccept(q.id)}
               >
-                Accept
+                ✍️ Accept
               </button>
             </li>
           ))}

@@ -53,11 +53,11 @@ import { playSfx } from './utils/sound';
 import './App.css';
 
 const MOBILE_TABS = [
-  { id: 'market', label: 'Market' },
-  { id: 'travel', label: 'Travel' },
-  { id: 'finance', label: 'Finance' },
-  { id: 'ship', label: 'Ship' },
-  { id: 'more', label: 'More' },
+  { id: 'market', label: '🛒 Market' },
+  { id: 'travel', label: '🚀 Travel' },
+  { id: 'finance', label: '💹 Finance' },
+  { id: 'ship', label: '🛸 Ship' },
+  { id: 'more', label: '⋯ More' },
 ];
 
 export default function App() {
@@ -93,6 +93,8 @@ export default function App() {
     fireCrew,
     buyStock,
     sellStock,
+    postStockQuote,
+    pullStockQuote,
     claimMission,
     setAutoTradeRules,
     setAutoTradeOnArrive,
@@ -343,7 +345,7 @@ export default function App() {
           </div>
           <div className="title-actions">
             <button type="button" className="btn btn-fuel" onClick={openWiki}>
-              Wiki
+              📖 Wiki
             </button>
             <button
               type="button"
@@ -351,7 +353,7 @@ export default function App() {
               onClick={showIntroAgain}
               title="Show welcome / introduction again"
             >
-              Intro
+              👋 Intro
             </button>
           </div>
         </div>
@@ -364,11 +366,11 @@ export default function App() {
 
         <main className="dashboard">
           <div className="col-main">
-            <p className="desk-section-label">Docked location</p>
+            <p className="desk-section-label">🪟 Docked location</p>
             <div className="mob-section" data-mob="travel">
               <LocationView planet={state.currentPlanet} />
             </div>
-            <p className="desk-section-label">Market</p>
+            <p className="desk-section-label">🛒 Market</p>
             <div className="mob-section" data-mob="market">
               <MarketTable state={state} onBuy={buy} onSell={sell} />
               <AutoTradePanel
@@ -385,7 +387,7 @@ export default function App() {
                 }}
               />
             </div>
-            <p className="desk-section-label">Travel & contracts</p>
+            <p className="desk-section-label">🚀 Travel & contracts</p>
             <div className="mob-section desk-travel-grid" data-mob="travel">
               <TravelPanel
                 state={state}
@@ -404,13 +406,15 @@ export default function App() {
                 onNextHop={routeNext}
               />
             </div>
-            <p className="desk-section-label">Finance & risk</p>
+            <p className="desk-section-label">💹 Finance & risk</p>
             <div className="mob-section" data-mob="finance">
               <div className="desk-finance-grid">
                 <StockMarket
                   state={state}
                   onBuy={buyStock}
                   onSell={sellStock}
+                  onPostQuote={postStockQuote}
+                  onPullQuote={pullStockQuote}
                 />
                 <FuturesPanel
                   state={state}
@@ -425,7 +429,7 @@ export default function App() {
           </div>
 
           <div className="col-side">
-            <p className="desk-section-label">Ship & cargo</p>
+            <p className="desk-section-label">🛸 Ship & cargo</p>
             <div className="mob-section" data-mob="ship">
               <ShipStatus state={state} />
               <CargoPanel state={state} />
@@ -447,7 +451,7 @@ export default function App() {
                 onSell={sellContraband}
               />
             </div>
-            <p className="desk-section-label">Sector & game</p>
+            <p className="desk-section-label">🌌 Sector & game</p>
             <div className="mob-section" data-mob="more">
               <MissionsPanel
                 state={state}

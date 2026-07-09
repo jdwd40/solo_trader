@@ -43,7 +43,7 @@ export default function AutoTradePanel({
   return (
     <section className="panel autotrade-panel">
       <div className="panel-header">
-        <h2>Auto-trade</h2>
+        <h2>🤖 Auto-trade</h2>
         <span className="badge muted-badge">Macros</span>
       </div>
       <p className="muted intel-blurb">
@@ -57,7 +57,7 @@ export default function AutoTradePanel({
             checked={state.autoTradeOnArrive !== false}
             onChange={(e) => onToggleArrive(e.target.checked)}
           />
-          Run on planet arrival
+          🛬 Run on planet arrival
         </span>
       </label>
 
@@ -140,10 +140,10 @@ export default function AutoTradePanel({
 
       <div className="loan-actions">
         <button type="button" className="btn btn-secondary" onClick={add}>
-          + Rule
+          ➕ Rule
         </button>
         <button type="button" className="btn btn-fuel" onClick={save}>
-          Save rules
+          💾 Save rules
         </button>
         <button
           type="button"
@@ -151,7 +151,7 @@ export default function AutoTradePanel({
           disabled={state.gameOver || state.needsHullSelect}
           onClick={onRunNow}
         >
-          Run now
+          ▶️ Run now
         </button>
       </div>
       <p className="muted" style={{ fontSize: '0.78rem', marginTop: '0.45rem' }}>

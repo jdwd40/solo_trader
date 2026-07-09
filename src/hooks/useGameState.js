@@ -32,12 +32,14 @@ import {
   emptyCrew,
   emptyPortfolio,
   emptyStats,
+  emptyStockQuotes,
   getHull,
   upgradeCost,
 } from '../data/gameData';
 import {
   appendPriceHistory,
   applyRumourDiscount,
+  applyTradeImpact,
   buildDisplayPrices,
   calcNetWorthFromState,
   cargoUsed,
@@ -52,12 +54,14 @@ import {
   isBlackMarketPlanet,
   legalSaleRevenue,
   loadPrestige,
+  marketBook,
   pushNews,
   refreshPrices,
   rollCustomsCheck,
   rollTravelEvent,
   scaledInsurancePremium,
   seedPriceHistory,
+  settleStockQuotes,
   tickDemandEvents,
   createRival,
   evaluateAutoTradeRules,
@@ -212,6 +216,7 @@ function createInitialState(companyName = DEFAULT_COMPANY_NAME, opts = {}) {
     crew: emptyCrew(),
     portfolio: emptyPortfolio(),
     stockPrices,
+    stockQuotes: emptyStockQuotes(),
     rival: createRival(),
     // v1.7
     difficulty,
@@ -279,6 +284,7 @@ function normalizeState(raw) {
     crew: { ...emptyCrew(), ...(raw.crew || {}) },
     portfolio: { ...emptyPortfolio(), ...(raw.portfolio || {}) },
     stockPrices: raw.stockPrices || initStockPrices(),
+    stockQuotes: { ...emptyStockQuotes(), ...(raw.stockQuotes || {}) },
     rival: raw.rival || createRival(),
     difficulty: DIFFICULTIES[raw.difficulty] ? raw.difficulty : 'normal',
     missionsClaimed: Array.isArray(raw.missionsClaimed)
@@ -840,10 +846,11 @@ function reducer(state, action) {
         demandResult.demandEvents,
         nextTurn
       );
-      next.stockPrices = tickStockPrices(
-        next.stockPrices || initStockPrices(),
-        next.season
-      );
+      const prevStockMids = { ...(next.stockPrices || initStockPrices()) };
+      next.stockPrices = tickStockPrices(prevStockMids, next.season);
+      const mm = settleStockQuotes(next, prevStockMids, next.stockPrices);
+      next = mm.state;
+      for (const m of mm.messages) next = pushLog(next, m);
       next.priceHistory = appendPriceHistory(state.priceHistory, next.prices);
 
       next = pushLog(
@@ -1486,21 +1493,25 @@ function reducer(state, action) {
       return pushLog(next, `👥 Released ${role.name} from the crew.`);
     }
 
-    /* ── Stocks ────────────────────────────────────────────────── */
+    /* ── Stocks (bid/ask microstructure) ───────────────────────── */
+    /* BUY = take the market ask. SELL = hit the market bid.        */
     case 'BUY_STOCK': {
       if (state.gameOver || blockedWithoutHull(state)) return state;
       const id = action.indexId;
       if (!STOCK_INDICES[id]) return state;
       let shares = action.shares;
       if (!Number.isInteger(shares) || shares <= 0) return state;
-      const unit = state.stockPrices?.[id] || STOCK_INDICES[id].base;
+      const mid = state.stockPrices?.[id] || STOCK_INDICES[id].base;
+      const book = marketBook(mid, state.season, id);
+      const unit = book.ask;
       const cost = unit * shares;
       if (cost > state.credits) {
         return pushLog(
           state,
-          `Need ${cost.toLocaleString()} cr for ${shares} ${STOCK_INDICES[id].name} shares.`
+          `Need ${cost.toLocaleString()} cr to take the ask on ${shares} ${STOCK_INDICES[id].name} @ ${unit}.`
         );
       }
+      const nextMid = applyTradeImpact(mid, 'buy', shares);
       let next = {
         ...state,
         credits: state.credits - cost,
@@ -1508,6 +1519,7 @@ function reducer(state, action) {
           ...state.portfolio,
           [id]: (state.portfolio?.[id] || 0) + shares,
         },
+        stockPrices: { ...state.stockPrices, [id]: nextMid },
         stats: {
           ...state.stats,
           stockTrades: (state.stats?.stockTrades || 0) + 1,
@@ -1516,7 +1528,7 @@ function reducer(state, action) {
       };
       next = pushLog(
         next,
-        `📈 Bought ${shares} ${STOCK_INDICES[id].name} @ ${unit} (−${cost.toLocaleString()} cr).`
+        `📈 Took ask: ${shares} ${STOCK_INDICES[id].name} @ ${unit} (−${cost.toLocaleString()} cr). Mid → ${nextMid}.`
       );
       return trackNetWorth(next);
     }
@@ -1531,8 +1543,11 @@ function reducer(state, action) {
       if (shares > owned) {
         return pushLog(state, `You only hold ${owned} shares.`);
       }
-      const unit = state.stockPrices?.[id] || STOCK_INDICES[id].base;
+      const mid = state.stockPrices?.[id] || STOCK_INDICES[id].base;
+      const book = marketBook(mid, state.season, id);
+      const unit = book.bid;
       const revenue = unit * shares;
+      const nextMid = applyTradeImpact(mid, 'sell', shares);
       let next = {
         ...state,
         credits: state.credits + revenue,
@@ -1540,6 +1555,7 @@ function reducer(state, action) {
           ...state.portfolio,
           [id]: owned - shares,
         },
+        stockPrices: { ...state.stockPrices, [id]: nextMid },
         stats: {
           ...state.stats,
           stockTrades: (state.stats?.stockTrades || 0) + 1,
@@ -1548,9 +1564,73 @@ function reducer(state, action) {
       };
       next = pushLog(
         next,
-        `📉 Sold ${shares} ${STOCK_INDICES[id].name} @ ${unit} (+${revenue.toLocaleString()} cr).`
+        `📉 Hit bid: ${shares} ${STOCK_INDICES[id].name} @ ${unit} (+${revenue.toLocaleString()} cr). Mid → ${nextMid}.`
       );
       return trackNetWorth(next);
+    }
+
+    case 'POST_STOCK_QUOTE': {
+      if (state.gameOver || blockedWithoutHull(state)) return state;
+      const id = action.indexId;
+      if (!STOCK_INDICES[id]) return state;
+      const bidSize = Math.max(0, Math.min(99, Math.floor(Number(action.bidSize) || 0)));
+      const askSize = Math.max(0, Math.min(99, Math.floor(Number(action.askSize) || 0)));
+      if (bidSize <= 0 && askSize <= 0) {
+        return pushLog(state, 'Post a bid size, ask size, or both to make a market.');
+      }
+      const mid = state.stockPrices?.[id] || STOCK_INDICES[id].base;
+      const book = marketBook(mid, state.season, id);
+      const owned = state.portfolio?.[id] || 0;
+      if (askSize > owned) {
+        return pushLog(
+          state,
+          `Need ${askSize} shares to offer that ask (hold ${owned}). Buy first or lower ask size.`
+        );
+      }
+      const bidReserve = book.bid * bidSize;
+      if (bidSize > 0 && bidReserve > state.credits) {
+        return pushLog(
+          state,
+          `Need ~${bidReserve.toLocaleString()} cr to stand for ${bidSize} on the bid @ ${book.bid}.`
+        );
+      }
+      let next = {
+        ...state,
+        stockQuotes: {
+          ...(state.stockQuotes || emptyStockQuotes()),
+          [id]: { bidSize, askSize },
+        },
+        stats: {
+          ...state.stats,
+          mmQuotes: (state.stats?.mmQuotes || 0) + 1,
+        },
+      };
+      next = pushLog(
+        next,
+        `🏦 2-way quote on ${STOCK_INDICES[id].name}: bid ${bidSize}@${book.bid} · ask ${askSize}@${book.ask}. Flow fills on jumps.`
+      );
+      return next;
+    }
+
+    case 'PULL_STOCK_QUOTE': {
+      if (state.gameOver) return state;
+      const id = action.indexId;
+      if (!STOCK_INDICES[id]) return state;
+      if (!state.stockQuotes?.[id]) {
+        return pushLog(state, 'No resting quote on that index.');
+      }
+      let next = {
+        ...state,
+        stockQuotes: {
+          ...(state.stockQuotes || emptyStockQuotes()),
+          [id]: null,
+        },
+      };
+      next = pushLog(
+        next,
+        `🏦 Pulled quotes on ${STOCK_INDICES[id].name}.`
+      );
+      return next;
     }
 
     case 'CLAIM_MISSION': {
@@ -1672,6 +1752,14 @@ export function useGameState() {
 
   const sellStock = useCallback((indexId, shares) => {
     dispatch({ type: 'SELL_STOCK', indexId, shares });
+  }, []);
+
+  const postStockQuote = useCallback((indexId, bidSize, askSize) => {
+    dispatch({ type: 'POST_STOCK_QUOTE', indexId, bidSize, askSize });
+  }, []);
+
+  const pullStockQuote = useCallback((indexId) => {
+    dispatch({ type: 'PULL_STOCK_QUOTE', indexId });
   }, []);
 
   const selectHull = useCallback((hullId) => {
@@ -1866,6 +1954,8 @@ export function useGameState() {
     fireCrew,
     buyStock,
     sellStock,
+    postStockQuote,
+    pullStockQuote,
     markScoreRecorded,
     saveGame,
     loadGame,

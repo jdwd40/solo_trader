@@ -100,8 +100,8 @@ export default function GameOverScreen({ state, onNewGame, onScoreRecorded }) {
       aria-labelledby="game-over-title"
     >
       <div className="game-over-card game-over-wide">
-        <p className="game-over-kicker">Voyage Complete</p>
-        <h2 id="game-over-title">Final Score</h2>
+        <p className="game-over-kicker">🏁 Voyage Complete</p>
+        <h2 id="game-over-title">🏆 Final Score</h2>
         <p className="game-over-company">
           {state.companyName}
           {state.shipTitle ? ` · ${state.shipTitle}` : ''}
@@ -110,47 +110,47 @@ export default function GameOverScreen({ state, onNewGame, onScoreRecorded }) {
         </p>
 
         <div className="epilogue-block">
-          <span className="rating-label">Epilogue</span>
+          <span className="rating-label">📖 Epilogue</span>
           <span className="rating-value">{epilogue.title}</span>
           <p className="epilogue-text">{epilogue.text}</p>
         </div>
 
         <dl className="score-grid">
           <div>
-            <dt>Credits</dt>
+            <dt>💰 Credits</dt>
             <dd>{fmt(state.credits)}</dd>
           </div>
           <div>
-            <dt>Ship cargo</dt>
+            <dt>📦 Ship cargo</dt>
             <dd>{fmt(cargoVal)}</dd>
           </div>
           <div>
-            <dt>Warehouses</dt>
+            <dt>🏭 Warehouses</dt>
             <dd>{fmt(whVal)}</dd>
           </div>
           <div>
-            <dt>Stocks</dt>
+            <dt>📈 Stocks</dt>
             <dd>{fmt(stockVal)}</dd>
           </div>
           <div>
-            <dt>Debt</dt>
+            <dt>📉 Debt</dt>
             <dd className={debt > 0 ? 'debt' : ''}>{fmt(debt)}</dd>
           </div>
           <div>
-            <dt>Reputation</dt>
+            <dt>⭐ Reputation</dt>
             <dd>
               {reputationLabel(state.reputation ?? 55)} (
               {state.reputation ?? 55})
             </dd>
           </div>
           <div className="score-highlight">
-            <dt>Net Worth</dt>
+            <dt>💎 Net Worth</dt>
             <dd>{fmt(netWorth)}</dd>
           </div>
         </dl>
 
         <div className="rating-block">
-          <span className="rating-label">Rating</span>
+          <span className="rating-label">🎖️ Rating</span>
           <span className="rating-value">{rating}</span>
         </div>
 
@@ -170,7 +170,7 @@ export default function GameOverScreen({ state, onNewGame, onScoreRecorded }) {
 
         {state.runMode === 'daily' && dailyScores.length > 0 ? (
           <div className="go-highscores">
-            <h3>Daily leaderboard ({state.rngSeed})</h3>
+            <h3>📅 Daily leaderboard ({state.rngSeed})</h3>
             <ol className="highscore-list compact">
               {dailyScores.slice(0, 5).map((s, i) => (
                 <li key={`d-${s.date}-${i}`}>
@@ -187,7 +187,7 @@ export default function GameOverScreen({ state, onNewGame, onScoreRecorded }) {
         ) : null}
 
         <div className="go-highscores">
-          <h3>All-time leaderboard</h3>
+          <h3>🏆 All-time leaderboard</h3>
           {scores.length === 0 ? (
             <p className="muted">No scores saved.</p>
           ) : (
@@ -211,7 +211,7 @@ export default function GameOverScreen({ state, onNewGame, onScoreRecorded }) {
           className="btn btn-primary btn-lg"
           onClick={onNewGame}
         >
-          Start New Game
+          🚀 Start New Game
         </button>
       </div>
     </div>

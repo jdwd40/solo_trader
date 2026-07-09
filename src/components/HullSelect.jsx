@@ -27,10 +27,10 @@ export default function HullSelect({
     >
       <div className="game-over-card game-over-wide hull-card">
         <p className="game-over-kicker">
-          {isSwitch ? 'Shipyard' : 'Launch Bay'}
+          {isSwitch ? '🛠️ Shipyard' : '🚀 Launch Bay'}
         </p>
         <h2 id="hull-title">
-          {isSwitch ? 'Switch hull class' : 'Choose difficulty & hull'}
+          {isSwitch ? '🛸 Switch hull class' : '⚙️ Choose difficulty & hull'}
         </h2>
         <p className="game-over-company">
           {isSwitch
@@ -94,7 +94,7 @@ export default function HullSelect({
 
         {isSwitch && onCancel ? (
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
-            Cancel
+            ✖️ Cancel
           </button>
         ) : null}
 

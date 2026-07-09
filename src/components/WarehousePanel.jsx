@@ -26,7 +26,7 @@ export default function WarehousePanel({
   return (
     <section className="panel warehouse-panel">
       <div className="panel-header">
-        <h2>Warehouse</h2>
+        <h2>🏭 Warehouse</h2>
         <span className="badge muted-badge">{planet}</span>
       </div>
 
@@ -44,7 +44,7 @@ export default function WarehousePanel({
             }
             onClick={onUnlock}
           >
-            Unlock ({fmt(WAREHOUSE_UNLOCK_COST)} cr)
+            🔑 Unlock ({fmt(WAREHOUSE_UNLOCK_COST)} cr)
           </button>
         </>
       ) : (
@@ -89,7 +89,7 @@ export default function WarehousePanel({
               disabled={state.gameOver || shipOwned < safeQty}
               onClick={() => onDeposit(commodity, safeQty)}
             >
-              Deposit
+              ⬇️ Deposit
             </button>
             <button
               type="button"
@@ -97,7 +97,7 @@ export default function WarehousePanel({
               disabled={state.gameOver || stored < safeQty}
               onClick={() => onWithdraw(commodity, safeQty)}
             >
-              Withdraw
+              ⬆️ Withdraw
             </button>
           </div>
         </>

@@ -7,7 +7,7 @@ export default function CrewPanel({ state, onHire, onFire }) {
   return (
     <section className="panel crew-panel">
       <div className="panel-header">
-        <h2>Crew</h2>
+        <h2>👥 Crew</h2>
         <span className="badge muted-badge">Wages / jump</span>
       </div>
       <p className="muted intel-blurb">
@@ -25,7 +25,7 @@ export default function CrewPanel({ state, onHire, onFire }) {
                   alt={`${role.name} portrait`}
                   loading="lazy"
                 />
-                {hired ? <span className="crew-badge">Aboard</span> : null}
+                {hired ? <span className="crew-badge">✅ Aboard</span> : null}
               </div>
               <div className="crew-card-body">
                 <strong>{role.name}</strong>
@@ -40,7 +40,7 @@ export default function CrewPanel({ state, onHire, onFire }) {
                     disabled={state.gameOver}
                     onClick={() => onFire(role.id)}
                   >
-                    Fire
+                    🚪 Fire
                   </button>
                 ) : (
                   <button
@@ -53,7 +53,7 @@ export default function CrewPanel({ state, onHire, onFire }) {
                     }
                     onClick={() => onHire(role.id)}
                   >
-                    Hire
+                    🤝 Hire
                   </button>
                 )}
               </div>

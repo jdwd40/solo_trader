@@ -56,7 +56,7 @@ export default function ShipStatus({ state }) {
   return (
     <section className="panel ship-status" aria-label="Ship status">
       <div className="panel-header">
-        <h2>Ship status</h2>
+        <h2>🛸 Ship status</h2>
         <span className="badge">{noHull ? 'No hull' : hull.name}</span>
       </div>
 
@@ -87,14 +87,14 @@ export default function ShipStatus({ state }) {
 
         <div className="ship-status-stats">
           <StatBar
-            label="Fuel"
+            label="⛽ Fuel"
             value={state.fuel}
             max={state.maxFuel}
             colorClass="fill-fuel"
             detail={`${state.fuel} / ${state.maxFuel} · ${fuelPct}%`}
           />
           <StatBar
-            label="Cargo hold"
+            label="📦 Cargo hold"
             value={used}
             max={state.cargoCapacity}
             colorClass="fill-cargo"
@@ -103,20 +103,20 @@ export default function ShipStatus({ state }) {
 
           <dl className="ship-kv">
             <div>
-              <dt>Docked</dt>
+              <dt>📍 Docked</dt>
               <dd>
                 <span aria-hidden="true">{planetIcon}</span> {state.currentPlanet}
               </dd>
             </div>
             <div>
-              <dt>Jump cost</dt>
+              <dt>🚀 Jump cost</dt>
               <dd>
                 {jumpCost} fuel · ~{jumpsLeft} jump
                 {jumpsLeft === 1 ? '' : 's'} left
               </dd>
             </div>
             <div>
-              <dt>Credits / debt</dt>
+              <dt>💰 Credits / debt</dt>
               <dd>
                 <span className="credits">{fmt(state.credits)}</span>
                 {state.debt > 0 ? (
@@ -127,17 +127,17 @@ export default function ShipStatus({ state }) {
               </dd>
             </div>
             <div>
-              <dt>Upgrades</dt>
+              <dt>⚙️ Upgrades</dt>
               <dd>
                 Hold Lv {upgrades.cargo || 0} · Tanks Lv {upgrades.fuel || 0}
               </dd>
             </div>
             <div>
-              <dt>Crew wages</dt>
+              <dt>👥 Crew wages</dt>
               <dd>{wages > 0 ? `${fmt(wages)} cr / jump` : 'None aboard'}</dd>
             </div>
             <div>
-              <dt>Risk profile</dt>
+              <dt>⚠️ Risk profile</dt>
               <dd>
                 Pirates ×{hull.pirateRiskMod} · Customs ×{hull.contrabandRiskMod}
               </dd>
@@ -145,7 +145,7 @@ export default function ShipStatus({ state }) {
           </dl>
 
           <div className="ship-crew-row">
-            <span className="ship-crew-label">Crew roster</span>
+            <span className="ship-crew-label">👥 Crew roster</span>
             <ul className="ship-crew-avatars">
               {Object.values(CREW_ROLES).map((role) => {
                 const onBoard = Boolean(state.crew?.[role.id]);

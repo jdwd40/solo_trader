@@ -2,7 +2,7 @@ export default function AccessibilityPanel({ settings, onChange }) {
   return (
     <section className="panel a11y-panel">
       <div className="panel-header">
-        <h2>Accessibility</h2>
+        <h2>♿ Accessibility</h2>
       </div>
       <ul className="a11y-list">
         <li>
@@ -14,7 +14,7 @@ export default function AccessibilityPanel({ settings, onChange }) {
                 onChange({ ...settings, highContrast: e.target.checked })
               }
             />
-            High contrast
+            🌓 High contrast
           </label>
         </li>
         <li>
@@ -26,7 +26,7 @@ export default function AccessibilityPanel({ settings, onChange }) {
                 onChange({ ...settings, reducedMotion: e.target.checked })
               }
             />
-            Reduced motion
+            🐢 Reduced motion
           </label>
         </li>
         <li>
@@ -38,7 +38,7 @@ export default function AccessibilityPanel({ settings, onChange }) {
                 onChange({ ...settings, showShortcuts: e.target.checked })
               }
             />
-            Show shortcut hints
+            ⌨️ Show shortcut hints
           </label>
         </li>
         <li>
@@ -50,13 +50,13 @@ export default function AccessibilityPanel({ settings, onChange }) {
                 onChange({ ...settings, soundEnabled: e.target.checked })
               }
             />
-            Sound effects
+            🔊 Sound effects
           </label>
         </li>
       </ul>
       {settings.soundEnabled !== false ? (
         <label className="volume-row muted">
-          Volume
+          🔉 Volume
           <input
             type="range"
             min={0}

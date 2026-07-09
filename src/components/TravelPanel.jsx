@@ -15,7 +15,7 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
   return (
     <section className="panel travel-panel" data-tutorial="travel">
       <div className="panel-header">
-        <h2>Travel</h2>
+        <h2>🚀 Travel</h2>
         <span className="badge muted-badge">
           Cost: {fuelCost} fuel · 1 turn
         </span>
@@ -58,9 +58,9 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
 
       <div className="refuel-row">
         <div className="refuel-info">
-          <span>Fuel Cells price: {fmt(fuelPrice)} cr/unit</span>
+          <span>⛽ Fuel Cells: {fmt(fuelPrice)} cr/unit</span>
           <span>
-            Tank: {state.fuel}/{state.maxFuel}
+            🛢️ Tank: {state.fuel}/{state.maxFuel}
           </span>
         </div>
         <div className="refuel-actions">
@@ -70,7 +70,7 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
             disabled={!canRefuel}
             onClick={() => onBuyFuel(10)}
           >
-            +10 Fuel
+            ⛽ +10 Fuel
           </button>
           <button
             type="button"
@@ -78,7 +78,7 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
             disabled={!canRefuel}
             onClick={() => onBuyFuel(fuelRoom)}
           >
-            Fill Tank
+            🛢️ Fill Tank
           </button>
         </div>
       </div>
