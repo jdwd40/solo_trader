@@ -200,6 +200,7 @@ export const CREW_ROLES = {
     hireCost: 2_000,
     wage: 80,
     fuelDiscount: 1,
+    avatar: '/crew/navigator.jpg',
   },
   broker: {
     id: 'broker',
@@ -208,6 +209,7 @@ export const CREW_ROLES = {
     hireCost: 2_500,
     wage: 100,
     saleBonus: 0.08,
+    avatar: '/crew/broker.jpg',
   },
   gunner: {
     id: 'gunner',
@@ -216,6 +218,7 @@ export const CREW_ROLES = {
     hireCost: 2_200,
     wage: 90,
     pirateLossMod: 0.5,
+    avatar: '/crew/gunner.jpg',
   },
 };
 
@@ -274,6 +277,7 @@ export const SHIP_HULLS = {
     contrabandRiskMod: 1.0,
     pirateRiskMod: 0.9,
     interestMod: 1.0,
+    image: '/ships/freighter.jpg',
   },
   smuggler: {
     id: 'smuggler',
@@ -285,6 +289,7 @@ export const SHIP_HULLS = {
     contrabandRiskMod: 0.55,
     pirateRiskMod: 1.2,
     interestMod: 1.08,
+    image: '/ships/smuggler.jpg',
   },
   tanker: {
     id: 'tanker',
@@ -296,6 +301,7 @@ export const SHIP_HULLS = {
     contrabandRiskMod: 1.1,
     pirateRiskMod: 0.85,
     interestMod: 0.95,
+    image: '/ships/tanker.jpg',
   },
 };
 

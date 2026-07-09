@@ -24,6 +24,7 @@ import RivalPanel from './components/RivalPanel';
 import RoutePlanner from './components/RoutePlanner';
 import SaveSlotsPanel from './components/SaveSlotsPanel';
 import SeasonBanner from './components/SeasonBanner';
+import ShipStatus from './components/ShipStatus';
 import ShipUpgrades from './components/ShipUpgrades';
 import StatsAchievements from './components/StatsAchievements';
 import StatusBar from './components/StatusBar';
@@ -426,6 +427,7 @@ export default function App() {
           <div className="col-side">
             <p className="desk-section-label">Ship & cargo</p>
             <div className="mob-section" data-mob="ship">
+              <ShipStatus state={state} />
               <CargoPanel state={state} />
               <CrewPanel
                 state={state}

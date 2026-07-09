@@ -71,6 +71,9 @@ export default function HullSelect({
                   onSelect(h.id);
                 }}
               >
+                {h.image ? (
+                  <img className="hull-thumb" src={h.image} alt="" loading="lazy" />
+                ) : null}
                 <strong>{h.name}</strong>
                 <span className="muted">{h.blurb}</span>
                 <ul className="hull-stats">
