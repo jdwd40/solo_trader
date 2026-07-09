@@ -43,27 +43,25 @@ export default function AutoTradePanel({
   return (
     <section className="panel autotrade-panel">
       <div className="panel-header">
-        <h2>🤖 Auto-trade</h2>
+        <h2>Auto-trade</h2>
         <span className="badge muted-badge">Macros</span>
       </div>
       <p className="muted intel-blurb">
         Simple if/then rules (not full AI). Run on arrival or manually.
       </p>
 
-      <label className="a11y-list" style={{ marginBottom: '0.5rem' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-          <input
-            type="checkbox"
-            checked={state.autoTradeOnArrive !== false}
-            onChange={(e) => onToggleArrive(e.target.checked)}
-          />
-          🛬 Run on planet arrival
-        </span>
+      <label className="toggle-row">
+        <input
+          type="checkbox"
+          checked={state.autoTradeOnArrive !== false}
+          onChange={(e) => onToggleArrive(e.target.checked)}
+        />
+        <span>Run on planet arrival</span>
       </label>
 
       <ul className="autotrade-list">
         {rules.map((r) => (
-          <li key={r.id}>
+          <li key={r.id} className="autotrade-rule">
             <label className="at-enable">
               <input
                 type="checkbox"
@@ -131,6 +129,7 @@ export default function AutoTradePanel({
               type="button"
               className="btn btn-secondary btn-xs"
               onClick={() => remove(r.id)}
+              aria-label="Remove auto-trade rule"
             >
               ×
             </button>

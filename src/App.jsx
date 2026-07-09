@@ -52,12 +52,12 @@ import { dailySeedKey } from './utils/rng';
 import { playSfx } from './utils/sound';
 import './App.css';
 
-const MOBILE_TABS = [
-  { id: 'market', label: '🛒 Market' },
-  { id: 'travel', label: '🚀 Travel' },
-  { id: 'finance', label: '💹 Finance' },
-  { id: 'ship', label: '🛸 Ship' },
-  { id: 'more', label: '⋯ More' },
+const WORKFLOWS = [
+  { id: 'trade', icon: '🛒', label: 'Trade', short: 'Trade' },
+  { id: 'travel', icon: '🚀', label: 'Travel', short: 'Travel' },
+  { id: 'finance', icon: '💹', label: 'Finance', short: 'Finance' },
+  { id: 'ship', icon: '🛸', label: 'Ship', short: 'Ship' },
+  { id: 'command', icon: '⋯', label: 'Command', short: 'More' },
 ];
 
 export default function App() {
@@ -110,7 +110,7 @@ export default function App() {
   const [showHullSwitch, setShowHullSwitch] = useState(false);
   const [settings, setSettings] = useState(() => loadSettings());
   const [showA11y, setShowA11y] = useState(true);
-  const [mobileTab, setMobileTab] = useState('market');
+  const [activeWorkflow, setActiveWorkflow] = useState('trade');
   const [pendingDifficulty, setPendingDifficulty] = useState(
     () => state.difficulty || 'normal'
   );
@@ -322,16 +322,28 @@ export default function App() {
   }
 
   const hullName = state.hullId ? getHull(state.hullId).name : '—';
+  const cargoUsedNow = Object.values(state.cargo || {}).reduce(
+    (sum, qty) => sum + (Number(qty) || 0),
+    0
+  );
+
+  function workflowMeta(id) {
+    if (id === 'trade') return `${cargoUsedNow}/${state.cargoCapacity} cargo`;
+    if (id === 'travel') return `${state.fuel}/${state.maxFuel} fuel`;
+    if (id === 'finance') return `${state.debt || 0} debt`;
+    if (id === 'ship') return hullName;
+    return `${state.eventLog?.length || 0} events`;
+  }
 
   return (
-    <div className={`app mobile-tab-${mobileTab}`}>
+    <div className={`app active-workflow-${activeWorkflow}`}>
       <div className="app-bg" aria-hidden="true">
         <div className="app-bg-ship" />
         <div className="app-bg-veil" />
       </div>
 
       <div className="app-shell">
-        <div className="title-row">
+        <div className="title-row app-masthead">
           <div>
             <h1 className="app-title">Star Trader Solo</h1>
             <p className="app-subtitle">
@@ -364,14 +376,35 @@ export default function App() {
           <SeasonBanner season={state.season} />
         </div>
 
-        <main className="dashboard">
-          <div className="col-main">
-            <p className="desk-section-label">🪟 Docked location</p>
-            <div className="mob-section" data-mob="travel">
-              <LocationView planet={state.currentPlanet} />
-            </div>
-            <p className="desk-section-label">🛒 Market</p>
-            <div className="mob-section" data-mob="market">
+        <main className="command-layout" aria-label="Trading command dashboard">
+          <aside className="workflow-nav" aria-label="Desktop workflows">
+            {WORKFLOWS.map((flow) => (
+              <button
+                key={flow.id}
+                type="button"
+                className={`workflow-nav-btn ${activeWorkflow === flow.id ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveWorkflow(flow.id);
+                  play('ui');
+                }}
+              >
+                <span className="workflow-icon" aria-hidden="true">
+                  {flow.icon}
+                </span>
+                <span className="workflow-copy">
+                  <strong>{flow.label}</strong>
+                  <span>{workflowMeta(flow.id)}</span>
+                </span>
+              </button>
+            ))}
+          </aside>
+
+          <section className="workflow-stage" aria-live="polite">
+            <div className="workflow-section workflow-trade">
+              <div className="workflow-heading">
+                <span>Trade desk</span>
+                <strong>{state.currentPlanet}</strong>
+              </div>
               <MarketTable state={state} onBuy={buy} onSell={sell} />
               <AutoTradePanel
                 state={state}
@@ -387,28 +420,39 @@ export default function App() {
                 }}
               />
             </div>
-            <p className="desk-section-label">🚀 Travel & contracts</p>
-            <div className="mob-section desk-travel-grid" data-mob="travel">
-              <TravelPanel
-                state={state}
-                onTravel={travel}
-                onBuyFuel={buyFuel}
-              />
-              <QuestBoard
-                state={state}
-                onAccept={acceptQuest}
-                onComplete={completeQuest}
-                onAbandon={abandonQuest}
-              />
-              <RoutePlanner
-                state={state}
-                onSaveRoute={setRoute}
-                onNextHop={routeNext}
-              />
+
+            <div className="workflow-section workflow-travel">
+              <div className="workflow-heading">
+                <span>Navigation</span>
+                <strong>{state.currentPlanet}</strong>
+              </div>
+              <LocationView planet={state.currentPlanet} />
+              <div className="workflow-grid workflow-grid-travel">
+                <TravelPanel
+                  state={state}
+                  onTravel={travel}
+                  onBuyFuel={buyFuel}
+                />
+                <QuestBoard
+                  state={state}
+                  onAccept={acceptQuest}
+                  onComplete={completeQuest}
+                  onAbandon={abandonQuest}
+                />
+                <RoutePlanner
+                  state={state}
+                  onSaveRoute={setRoute}
+                  onNextHop={routeNext}
+                />
+              </div>
             </div>
-            <p className="desk-section-label">💹 Finance & risk</p>
-            <div className="mob-section" data-mob="finance">
-              <div className="desk-finance-grid">
+
+            <div className="workflow-section workflow-finance">
+              <div className="workflow-heading">
+                <span>Finance and risk</span>
+                <strong>{state.runMode === 'daily' ? 'Daily run' : 'Classic run'}</strong>
+              </div>
+              <div className="workflow-grid workflow-grid-finance">
                 <StockMarket
                   state={state}
                   onBuy={buyStock}
@@ -426,117 +470,138 @@ export default function App() {
               </div>
               <MarketIntel state={state} onBuyIntel={buyIntel} />
             </div>
-          </div>
 
-          <div className="col-side">
-            <p className="desk-section-label">🛸 Ship & cargo</p>
-            <div className="mob-section" data-mob="ship">
-              <ShipStatus state={state} />
-              <CargoPanel state={state} />
-              <CrewPanel
-                state={state}
-                onHire={hireCrew}
-                onFire={fireCrew}
-              />
-              <ShipUpgrades state={state} onBuyUpgrade={buyUpgrade} />
-              <WarehousePanel
-                state={state}
-                onUnlock={unlockWarehouse}
-                onDeposit={warehouseDeposit}
-                onWithdraw={warehouseWithdraw}
-              />
-              <BlackMarketPanel
-                state={state}
-                onBuy={buyContraband}
-                onSell={sellContraband}
-              />
-            </div>
-            <p className="desk-section-label">🌌 Sector & game</p>
-            <div className="mob-section" data-mob="more">
-              <MissionsPanel
-                state={state}
-                onClaim={(id) => {
-                  claimMission(id);
-                  play('success');
-                }}
-              />
-              <RivalPanel rival={state.rival} />
-              <PirateMap state={state} />
-              <DemandBoard demandEvents={state.demandEvents} />
-              <StatsAchievements state={state} />
-              {showA11y ? (
-                <AccessibilityPanel
-                  settings={settings}
-                  onChange={updateSettings}
+            <div className="workflow-section workflow-ship">
+              <div className="workflow-heading">
+                <span>Ship operations</span>
+                <strong>{hullName}</strong>
+              </div>
+              <div className="mobile-context-only">
+                <ShipStatus state={state} />
+                <CargoPanel state={state} />
+              </div>
+              <div className="workflow-grid workflow-grid-ship">
+                <CrewPanel
+                  state={state}
+                  onHire={hireCrew}
+                  onFire={fireCrew}
                 />
-              ) : null}
-              <SaveSlotsPanel
-                onSaveSlot={(id, label) => {
-                  const r = saveGame(id, label);
-                  setControlMessage(r.message);
-                  if (r.ok) play('success');
-                  else play('error');
-                  return r;
-                }}
-                onLoadSlot={(id) => {
-                  if (
-                    !window.confirm(
-                      `Load slot ${id}? Current progress will be replaced.`
-                    )
-                  ) {
-                    return;
-                  }
-                  const r = loadGame(id);
-                  setControlMessage(r.message);
-                  if (r.ok) play('success');
-                  else play('error');
-                }}
-                onDeleteSlot={(id) => {
-                  if (!window.confirm(`Clear slot ${id}?`)) return;
-                  const r = deleteSlot(id);
-                  setControlMessage(r.message);
-                  play('ui');
-                }}
-              />
-              <EventLog events={state.eventLog} />
-              <HighScoreBoard scores={scores} />
-              <GameControls
-                onNewGame={handleNewGame}
-                onNewDaily={handleNewDaily}
-                onSave={handleSave}
-                onLoad={handleLoad}
-                onExport={handleExport}
-                onImportFile={handleImportFile}
-                onReplayTutorial={handleReplayTutorial}
-                onSwitchHull={() => setShowHullSwitch(true)}
-                message={controlMessage}
-                runMode={state.runMode}
-                rngSeed={state.rngSeed}
-              />
+                <ShipUpgrades state={state} onBuyUpgrade={buyUpgrade} />
+                <WarehousePanel
+                  state={state}
+                  onUnlock={unlockWarehouse}
+                  onDeposit={warehouseDeposit}
+                  onWithdraw={warehouseWithdraw}
+                />
+                <BlackMarketPanel
+                  state={state}
+                  onBuy={buyContraband}
+                  onSell={sellContraband}
+                />
+              </div>
             </div>
-          </div>
+
+            <div className="workflow-section workflow-command">
+              <div className="workflow-heading">
+                <span>Command center</span>
+                <strong>Run management</strong>
+              </div>
+              <div className="workflow-grid workflow-grid-command">
+                <MissionsPanel
+                  state={state}
+                  onClaim={(id) => {
+                    claimMission(id);
+                    play('success');
+                  }}
+                />
+                <RivalPanel rival={state.rival} />
+                <PirateMap state={state} />
+                <DemandBoard demandEvents={state.demandEvents} />
+                <StatsAchievements state={state} />
+                {showA11y ? (
+                  <AccessibilityPanel
+                    settings={settings}
+                    onChange={updateSettings}
+                  />
+                ) : null}
+                <SaveSlotsPanel
+                  onSaveSlot={(id, label) => {
+                    const r = saveGame(id, label);
+                    setControlMessage(r.message);
+                    if (r.ok) play('success');
+                    else play('error');
+                    return r;
+                  }}
+                  onLoadSlot={(id) => {
+                    if (
+                      !window.confirm(
+                        `Load slot ${id}? Current progress will be replaced.`
+                      )
+                    ) {
+                      return;
+                    }
+                    const r = loadGame(id);
+                    setControlMessage(r.message);
+                    if (r.ok) play('success');
+                    else play('error');
+                  }}
+                  onDeleteSlot={(id) => {
+                    if (!window.confirm(`Clear slot ${id}?`)) return;
+                    const r = deleteSlot(id);
+                    setControlMessage(r.message);
+                    play('ui');
+                  }}
+                />
+                <HighScoreBoard scores={scores} />
+                <GameControls
+                  onNewGame={handleNewGame}
+                  onNewDaily={handleNewDaily}
+                  onSave={handleSave}
+                  onLoad={handleLoad}
+                  onExport={handleExport}
+                  onImportFile={handleImportFile}
+                  onReplayTutorial={handleReplayTutorial}
+                  onSwitchHull={() => setShowHullSwitch(true)}
+                  message={controlMessage}
+                  runMode={state.runMode}
+                  rngSeed={state.rngSeed}
+                />
+                <div className="mobile-context-only">
+                  <EventLog events={state.eventLog} />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside className="command-rail" aria-label="Ship and event context">
+            <ShipStatus state={state} />
+            <CargoPanel state={state} />
+            <EventLog events={state.eventLog} />
+          </aside>
         </main>
 
         <footer className="app-footer">
           <span>
-            Open <strong>Wiki</strong> anytime for the field manual. Desktop
-            layout uses a sticky status bar and side rail; mobile tabs unchanged.
+            Open <strong>Wiki</strong> anytime for the field manual. The command
+            dashboard keeps trading, travel, finance, ship, and run tools in
+            focused workspaces.
           </span>
         </footer>
       </div>
 
       <nav className="mobile-nav" aria-label="Mobile sections">
-        {MOBILE_TABS.map((t) => (
+        {WORKFLOWS.map((t) => (
           <button
             key={t.id}
             type="button"
-            className={`mobile-nav-btn ${mobileTab === t.id ? 'active' : ''}`}
+            className={`mobile-nav-btn ${activeWorkflow === t.id ? 'active' : ''}`}
             onClick={() => {
-              setMobileTab(t.id);
+              setActiveWorkflow(t.id);
               play('ui');
             }}
           >
-            {t.label}
+            <span aria-hidden="true">{t.icon}</span>
+            <span>{t.short}</span>
           </button>
         ))}
       </nav>

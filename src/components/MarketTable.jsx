@@ -42,8 +42,8 @@ export default function MarketTable({ state, onBuy, onSell }) {
   return (
     <section className="panel market-panel" data-tutorial="market">
       <div className="panel-header">
-        <h2>🛒 Market — {state.currentPlanet}</h2>
-        <span className="badge muted-badge">Legal goods</span>
+        <h2>Market</h2>
+        <span className="badge muted-badge">{state.currentPlanet}</span>
       </div>
 
       {demands.length > 0 && (
@@ -178,6 +178,115 @@ export default function MarketTable({ state, onBuy, onSell }) {
           </tbody>
         </table>
       </div>
+
+      <ul className="market-card-list" aria-label="Market goods">
+        {LEGAL_COMMODITIES.map((commodity) => {
+          const price = prices[commodity];
+          const owned = state.cargo[commodity] || 0;
+          const qty = qtyOf(commodity);
+          const maxBuy = maxBuyQty(state.credits, free, price);
+          const cost = price * qty;
+          const canBuy = !state.gameOver && qty <= maxBuy && maxBuy > 0;
+          const canSell = !state.gameOver && owned >= qty && qty > 0;
+          const series = history[commodity] || [price];
+
+          return (
+            <li key={commodity} className="market-card">
+              <div className="market-card-main">
+                <div>
+                  <strong>
+                    <span className="icon-label" aria-hidden="true">
+                      {COMMODITY_ICONS[commodity] || '📦'}
+                    </span>{' '}
+                    {commodity}
+                  </strong>
+                  <span className="market-card-meta">
+                    Owned {owned} · Max buy {maxBuy}
+                  </span>
+                </div>
+                {demandTag(commodity)}
+              </div>
+
+              <div className="market-card-price">
+                <span>
+                  Price <strong>{fmt(price)}</strong>
+                </span>
+                <Sparkline values={series} />
+              </div>
+
+              <div className="market-card-controls">
+                <label>
+                  Qty
+                  <input
+                    className="row-qty"
+                    type="number"
+                    min={1}
+                    max={999}
+                    value={qtys[commodity] ?? 1}
+                    disabled={state.gameOver}
+                    onChange={(e) => setQty(commodity, e.target.value)}
+                    aria-label={`${commodity} quantity`}
+                  />
+                </label>
+                <div className="market-card-actions">
+                  <button
+                    type="button"
+                    className="btn btn-buy"
+                    disabled={!canBuy}
+                    title={
+                      canBuy
+                        ? `Buy ${qty} for ${fmt(cost)}`
+                        : 'Not enough credits or cargo space'
+                    }
+                    onClick={() => onBuy(commodity, qty)}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-buy btn-xs"
+                    disabled={state.gameOver || maxBuy <= 0}
+                    onClick={() => {
+                      if (maxBuy > 0) {
+                        setQty(commodity, maxBuy);
+                        onBuy(commodity, maxBuy);
+                      }
+                    }}
+                  >
+                    Max
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sell"
+                    disabled={!canSell}
+                    title={
+                      canSell
+                        ? `Sell ${qty} for ${fmt(price * qty)}`
+                        : 'Not enough cargo to sell'
+                    }
+                    onClick={() => onSell(commodity, qty)}
+                  >
+                    Sell
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sell btn-xs"
+                    disabled={state.gameOver || owned <= 0}
+                    onClick={() => {
+                      if (owned > 0) {
+                        setQty(commodity, owned);
+                        onSell(commodity, owned);
+                      }
+                    }}
+                  >
+                    All
+                  </button>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }

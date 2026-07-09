@@ -15,7 +15,7 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
   return (
     <section className="panel travel-panel" data-tutorial="travel">
       <div className="panel-header">
-        <h2>🚀 Travel</h2>
+        <h2>Travel</h2>
         <span className="badge muted-badge">
           Cost: {fuelCost} fuel · 1 turn
         </span>
@@ -44,13 +44,17 @@ export default function TravelPanel({ state, onTravel, onBuyFuel }) {
               }
               onClick={() => onTravel(planet)}
             >
-              <span className="icon-label" aria-hidden="true">
-                {PLANET_ICONS[planet] || '🪐'}
-              </span>{' '}
-              {planet}
-              {isHere ? ' · Here' : ''}
-              {hasDemand && !isHere ? ' · !' : ''}
-              {!isHere && press >= 65 ? ' · ☠' : ''}
+              <span className="planet-btn-main">
+                <span className="icon-label" aria-hidden="true">
+                  {PLANET_ICONS[planet] || '🪐'}
+                </span>
+                <strong>{planet}</strong>
+              </span>
+              <span className="planet-btn-meta">
+                {isHere ? 'Docked here' : `${pressureLabel(press)} pressure`}
+                {hasDemand && !isHere ? ' · demand event' : ''}
+                {!isHere && press >= 65 ? ' · pirate risk' : ''}
+              </span>
             </button>
           );
         })}
