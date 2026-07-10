@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Box, Button, Checkbox, Flex, Input, Select, Text, VStack } from '@chakra-ui/react';
 import { LEGAL_COMMODITIES, PLANETS } from '../data/gameData';
 import { fmt } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 function newRule() {
   return {
@@ -41,122 +43,186 @@ export default function AutoTradePanel({
   }
 
   return (
-    <section className="panel autotrade-panel">
-      <div className="panel-header">
-        <h2>Auto-trade</h2>
-        <span className="badge muted-badge">Macros</span>
-      </div>
-      <p className="muted intel-blurb">
-        Simple if/then rules (not full AI). Run on arrival or manually.
-      </p>
+    <GamePanel
+      title="Auto-trade"
+      icon="🤖"
+      badge="Macros"
+      badgeMuted
+    >
+      <VStack align="stretch" gap={3}>
+        <Text color="#8b9bb8" fontSize="0.9rem">
+          Simple if/then rules (not full AI). Run on arrival or manually.
+        </Text>
 
-      <label className="toggle-row">
-        <input
-          type="checkbox"
-          checked={state.autoTradeOnArrive !== false}
-          onChange={(e) => onToggleArrive(e.target.checked)}
-        />
-        <span>Run on planet arrival</span>
-      </label>
+        <Flex align="center" gap={2}>
+          <Checkbox
+            isChecked={state.autoTradeOnArrive !== false}
+            onChange={(e) => onToggleArrive(e.target.checked)}
+            colorScheme="cyan"
+            _checked={{
+              bg: '#4cc9f0',
+              borderColor: '#4cc9f0',
+            }}
+          />
+          <Text color="#e8eef8" fontSize="0.9rem">
+            Run on planet arrival
+          </Text>
+        </Flex>
 
-      <ul className="autotrade-list">
-        {rules.map((r) => (
-          <li key={r.id} className="autotrade-rule">
-            <label className="at-enable">
-              <input
-                type="checkbox"
-                checked={r.enabled}
+        <VStack gap={2} align="stretch">
+          {rules.map((r) => (
+            <Flex
+              key={r.id}
+              gap={2}
+              p={2}
+              bg="#0f1626"
+              border="1px solid #243049"
+              borderRadius="6px"
+              align="flex-end"
+              wrap="wrap"
+            >
+              <Checkbox
+                isChecked={r.enabled}
                 onChange={(e) => update(r.id, { enabled: e.target.checked })}
+                colorScheme="cyan"
+                _checked={{
+                  bg: '#4cc9f0',
+                  borderColor: '#4cc9f0',
+                }}
               />
-            </label>
-            <select
-              value={r.action}
-              onChange={(e) => update(r.id, { action: e.target.value })}
-            >
-              <option value="buy">Buy if ≤</option>
-              <option value="sell">Sell if ≥</option>
-            </select>
-            <select
-              value={r.commodity}
-              onChange={(e) => update(r.id, { commodity: e.target.value })}
-            >
-              {LEGAL_COMMODITIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <select
-              value={r.planet || ''}
-              onChange={(e) => update(r.id, { planet: e.target.value })}
-              title="Blank = any planet"
-            >
-              <option value="">Any planet</option>
-              {PLANETS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-            {r.action === 'buy' ? (
-              <input
-                className="row-qty"
-                type="number"
-                min={1}
-                value={r.maxPrice}
-                onChange={(e) =>
-                  update(r.id, {
-                    maxPrice: Math.max(1, Math.floor(Number(e.target.value) || 1)),
-                  })
-                }
-                title="Max unit price"
-              />
-            ) : (
-              <input
-                className="row-qty"
-                type="number"
-                min={1}
-                value={r.minPrice}
-                onChange={(e) =>
-                  update(r.id, {
-                    minPrice: Math.max(1, Math.floor(Number(e.target.value) || 1)),
-                  })
-                }
-                title="Min unit price"
-              />
-            )}
-            <button
-              type="button"
-              className="btn btn-secondary btn-xs"
-              onClick={() => remove(r.id)}
-              aria-label="Remove auto-trade rule"
-            >
-              ×
-            </button>
-          </li>
-        ))}
-      </ul>
+              <Select
+                value={r.action}
+                onChange={(e) => update(r.id, { action: e.target.value })}
+                size="sm"
+                minW="120px"
+                bg="#141e33"
+                border="1px solid #243049"
+                color="#e8eef8"
+                _focus={{ borderColor: '#4cc9f0' }}
+              >
+                <option value="buy">Buy if ≤</option>
+                <option value="sell">Sell if ≥</option>
+              </Select>
+              <Select
+                value={r.commodity}
+                onChange={(e) => update(r.id, { commodity: e.target.value })}
+                size="sm"
+                minW="120px"
+                bg="#141e33"
+                border="1px solid #243049"
+                color="#e8eef8"
+                _focus={{ borderColor: '#4cc9f0' }}
+              >
+                {LEGAL_COMMODITIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                value={r.planet || ''}
+                onChange={(e) => update(r.id, { planet: e.target.value })}
+                size="sm"
+                minW="120px"
+                bg="#141e33"
+                border="1px solid #243049"
+                color="#e8eef8"
+                _focus={{ borderColor: '#4cc9f0' }}
+                title="Blank = any planet"
+              >
+                <option value="">Any planet</option>
+                {PLANETS.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </Select>
+              {r.action === 'buy' ? (
+                <Input
+                  type="number"
+                  min={1}
+                  value={r.maxPrice}
+                  onChange={(e) =>
+                    update(r.id, {
+                      maxPrice: Math.max(1, Math.floor(Number(e.target.value) || 1)),
+                    })
+                  }
+                  size="sm"
+                  w="70px"
+                  bg="#141e33"
+                  border="1px solid #243049"
+                  color="#e8eef8"
+                  _focus={{ borderColor: '#4cc9f0' }}
+                  title="Max unit price"
+                />
+              ) : (
+                <Input
+                  type="number"
+                  min={1}
+                  value={r.minPrice}
+                  onChange={(e) =>
+                    update(r.id, {
+                      minPrice: Math.max(1, Math.floor(Number(e.target.value) || 1)),
+                    })
+                  }
+                  size="sm"
+                  w="70px"
+                  bg="#141e33"
+                  border="1px solid #243049"
+                  color="#e8eef8"
+                  _focus={{ borderColor: '#4cc9f0' }}
+                  title="Min unit price"
+                />
+              )}
+              <Button
+                size="xs"
+                bg="#2e4a7a"
+                color="#e8eef8"
+                border="1px solid #243049"
+                _hover={{ bg: '#364a6f', borderColor: '#2e4a7a' }}
+                onClick={() => remove(r.id)}
+                aria-label="Remove auto-trade rule"
+              >
+                ×
+              </Button>
+            </Flex>
+          ))}
+        </VStack>
 
-      <div className="loan-actions">
-        <button type="button" className="btn btn-secondary" onClick={add}>
-          ➕ Rule
-        </button>
-        <button type="button" className="btn btn-fuel" onClick={save}>
-          💾 Save rules
-        </button>
-        <button
-          type="button"
-          className="btn btn-buy"
-          disabled={state.gameOver || state.needsHullSelect}
-          onClick={onRunNow}
-        >
-          ▶️ Run now
-        </button>
-      </div>
-      <p className="muted" style={{ fontSize: '0.78rem', marginTop: '0.45rem' }}>
-        Buy uses max affordable/cargo. Sell dumps full stack. Example: Food ≤{' '}
-        {fmt(50)} at Earthport.
-      </p>
-    </section>
+        <Flex gap={2} wrap="wrap">
+          <Button
+            bg="#2e4a7a"
+            color="#e8eef8"
+            border="1px solid #243049"
+            _hover={{ bg: '#364a6f', borderColor: '#2e4a7a' }}
+            onClick={add}
+          >
+            ➕ Rule
+          </Button>
+          <Button
+            bg="#4cc9f0"
+            color="#070b14"
+            _hover={{ bg: '#3db8d8' }}
+            onClick={save}
+          >
+            💾 Save rules
+          </Button>
+          <Button
+            bg="#2dd4a8"
+            color="#070b14"
+            _hover={{ bg: '#23b392' }}
+            isDisabled={state.gameOver || state.needsHullSelect}
+            onClick={onRunNow}
+          >
+            ▶️ Run now
+          </Button>
+        </Flex>
+
+        <Text color="#8b9bb8" fontSize="0.78rem">
+          Buy uses max affordable/cargo. Sell dumps full stack. Example: Food ≤{' '}
+          {fmt(50)} at Earthport.
+        </Text>
+      </VStack>
+    </GamePanel>
   );
 }

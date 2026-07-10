@@ -1,15 +1,17 @@
+import { Box, Button, Flex, Text, VStack } from '@chakra-ui/react';
 import { UPGRADES, upgradeCost } from '../data/gameData';
 import { fmt } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function ShipUpgrades({ state, onBuyUpgrade }) {
   return (
-    <section className="panel upgrades-panel">
-      <div className="panel-header">
-        <h2>⚙️ Ship Upgrades</h2>
-        <span className="badge muted-badge">Permanent</span>
-      </div>
-
-      <ul className="upgrade-list">
+    <GamePanel
+      title="Ship Upgrades"
+      icon="⚙️"
+      badge="Permanent"
+      badgeMuted
+    >
+      <VStack gap={2} align="stretch">
         {Object.keys(UPGRADES).map((key) => {
           const def = UPGRADES[key];
           const level = state.upgrades?.[key] || 0;
@@ -26,18 +28,34 @@ export default function ShipUpgrades({ state, onBuyUpgrade }) {
           }
 
           return (
-            <li key={key} className="upgrade-card">
-              <div className="upgrade-info">
-                <strong>{def.name}</strong>
-                <span className="upgrade-desc">{def.description}</span>
-                <span className="upgrade-meta">
+            <Flex
+              key={key}
+              justify="space-between"
+              align="flex-start"
+              gap={3}
+              p={3}
+              bg="#0f1626"
+              border="1px solid"
+              borderColor="#243049"
+              borderRadius="8px"
+            >
+              <VStack align="stretch" flex={1} gap={1}>
+                <Text fontWeight="600" color="#e8eef8" fontSize="0.95rem">
+                  {def.name}
+                </Text>
+                <Text color="#8b9bb8" fontSize="0.85rem">
+                  {def.description}
+                </Text>
+                <Text color="#8b9bb8" fontSize="0.8rem">
                   Lv {level}/{def.maxLevel} · {effectHint}
-                </span>
-              </div>
-              <button
-                type="button"
-                className="btn btn-upgrade"
-                disabled={disabled}
+                </Text>
+              </VStack>
+              <Button
+                size="sm"
+                bg={maxed ? '#2e4a7a' : '#4cc9f0'}
+                color={maxed ? '#e8eef8' : '#070b14'}
+                _hover={{ bg: maxed ? '#364a6f' : '#3db8d8' }}
+                isDisabled={disabled}
                 onClick={() => onBuyUpgrade(key)}
                 title={
                   maxed
@@ -46,13 +64,15 @@ export default function ShipUpgrades({ state, onBuyUpgrade }) {
                       ? `Upgrade for ${fmt(cost)}`
                       : `Need ${fmt(cost)} credits`
                 }
+                flexShrink={0}
+                whiteSpace="nowrap"
               >
                 {maxed ? '✅ Maxed' : `⬆️ ${fmt(cost)} cr`}
-              </button>
-            </li>
+              </Button>
+            </Flex>
           );
         })}
-      </ul>
-    </section>
+      </VStack>
+    </GamePanel>
   );
 }

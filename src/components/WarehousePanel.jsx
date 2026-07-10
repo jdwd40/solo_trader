@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Box, Button, Flex, Input, Select, Text, VStack } from '@chakra-ui/react';
 import {
   COMMODITIES,
   WAREHOUSE_CAPACITY,
@@ -6,6 +7,7 @@ import {
   WAREHOUSE_UPKEEP,
 } from '../data/gameData';
 import { cargoUsed, fmt } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function WarehousePanel({
   state,
@@ -24,84 +26,107 @@ export default function WarehousePanel({
   const stored = unlocked ? wh[commodity] || 0 : 0;
 
   return (
-    <section className="panel warehouse-panel">
-      <div className="panel-header">
-        <h2>🏭 Warehouse</h2>
-        <span className="badge muted-badge">{planet}</span>
-      </div>
-
+    <GamePanel
+      title="Warehouse"
+      icon="🏭"
+      badge={planet}
+      badgeMuted
+    >
       {!unlocked ? (
-        <>
-          <p className="muted intel-blurb">
+        <VStack align="stretch" gap={3}>
+          <Text color="#8b9bb8" fontSize="0.9rem">
             Rent planetary storage (cap {WAREHOUSE_CAPACITY}). Upkeep{' '}
             {WAREHOUSE_UPKEEP} cr/jump while occupied.
-          </p>
-          <button
-            type="button"
-            className="btn btn-fuel"
-            disabled={
+          </Text>
+          <Button
+            bg="#4cc9f0"
+            color="#070b14"
+            _hover={{ bg: '#3db8d8' }}
+            isDisabled={
               state.gameOver || state.credits < WAREHOUSE_UNLOCK_COST
             }
             onClick={onUnlock}
           >
             🔑 Unlock ({fmt(WAREHOUSE_UNLOCK_COST)} cr)
-          </button>
-        </>
+          </Button>
+        </VStack>
       ) : (
-        <>
-          <div className="cargo-bar" aria-hidden="true">
-            <div
-              className="cargo-bar-fill"
-              style={{
-                width: `${Math.min(100, Math.round((used / WAREHOUSE_CAPACITY) * 100))}%`,
-              }}
+        <VStack align="stretch" gap={3}>
+          <Box
+            w="100%"
+            h="6px"
+            bg="#0f1626"
+            border="1px solid #243049"
+            borderRadius="3px"
+            overflow="hidden"
+            aria-hidden="true"
+          >
+            <Box
+              h="100%"
+              bg="#4cc9f0"
+              transition="width 0.3s"
+              w={`${Math.min(100, Math.round((used / WAREHOUSE_CAPACITY) * 100))}%`}
             />
-          </div>
-          <p className="muted" style={{ margin: '0 0 0.55rem', fontSize: '0.85rem' }}>
+          </Box>
+          <Text color="#8b9bb8" fontSize="0.85rem">
             {used} / {WAREHOUSE_CAPACITY} stored
             {used > 0 ? ` · upkeep ${WAREHOUSE_UPKEEP} cr/jump` : ''}
-          </p>
+          </Text>
 
-          <div className="futures-form">
-            <select
+          <Flex gap={2} wrap="wrap" align="flex-end">
+            <Select
               value={commodity}
-              disabled={state.gameOver}
+              isDisabled={state.gameOver}
               onChange={(e) => setCommodity(e.target.value)}
+              flex={1}
+              minW="200px"
+              bg="#141e33"
+              border="1px solid #243049"
+              color="#e8eef8"
+              _focus={{ borderColor: '#4cc9f0' }}
             >
               {COMMODITIES.map((c) => (
                 <option key={c} value={c}>
                   {c} (ship {state.cargo[c] || 0} · wh {wh[c] || 0})
                 </option>
               ))}
-            </select>
-            <input
-              className="row-qty"
+            </Select>
+            <Input
               type="number"
               min={1}
               max={99}
               value={qty}
-              disabled={state.gameOver}
+              isDisabled={state.gameOver}
               onChange={(e) => setQty(e.target.value)}
+              w="70px"
+              bg="#141e33"
+              border="1px solid #243049"
+              color="#e8eef8"
+              _focus={{ borderColor: '#4cc9f0' }}
             />
-            <button
-              type="button"
-              className="btn btn-buy btn-xs"
-              disabled={state.gameOver || shipOwned < safeQty}
+            <Button
+              size="xs"
+              bg="#2dd4a8"
+              color="#070b14"
+              _hover={{ bg: '#23b392' }}
+              isDisabled={state.gameOver || shipOwned < safeQty}
               onClick={() => onDeposit(commodity, safeQty)}
             >
               ⬇️ Deposit
-            </button>
-            <button
-              type="button"
-              className="btn btn-sell btn-xs"
-              disabled={state.gameOver || stored < safeQty}
+            </Button>
+            <Button
+              size="xs"
+              bg="#f0a04b"
+              color="#070b14"
+              _hover={{ bg: '#dc9442' }}
+              isDisabled={state.gameOver || stored < safeQty}
               onClick={() => onWithdraw(commodity, safeQty)}
             >
               ⬆️ Withdraw
-            </button>
-          </div>
-        </>
+            </Button>
+          </Flex>
+        </VStack>
       )}
-    </section>
+    </GamePanel>
   );
 }

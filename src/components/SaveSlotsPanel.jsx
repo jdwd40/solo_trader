@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Box, Button, Input, Text, VStack, HStack } from '@chakra-ui/react';
 import { fmt, listSaveSlots } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot }) {
   const [slots, setSlots] = useState(() => listSaveSlots());
@@ -10,45 +12,60 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
   }
 
   return (
-    <section className="panel slots-panel">
-      <div className="panel-header">
-        <h2>💾 Save Slots</h2>
-        <span className="badge muted-badge">A–F</span>
-      </div>
-      <p className="muted intel-blurb">
+    <GamePanel
+      title="Save Slots"
+      icon="💾"
+      badge="A–F"
+      badgeMuted
+    >
+      <Text color="#8b9bb8" mb={4} fontSize="0.9rem">
         Named slots keep separate campaigns without overwriting each other.
-      </p>
-      <div className="futures-form" style={{ marginBottom: '0.5rem' }}>
-        <input
-          type="text"
-          className="slot-label-input"
-          placeholder="Optional label"
-          maxLength={24}
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-        />
-      </div>
-      <ul className="slot-list">
+      </Text>
+
+      <Input
+        type="text"
+        placeholder="Optional label"
+        maxLength={24}
+        value={label}
+        onChange={(e) => setLabel(e.target.value)}
+        bg="#141e33"
+        border="1px solid #243049"
+        color="#e8eef8"
+        _placeholder={{ color: '#8b9bb8' }}
+        mb={4}
+        fontSize="0.9rem"
+      />
+
+      <VStack gap={3} align="stretch">
         {slots.map((s) => (
-          <li key={s.id}>
-            <div className="slot-info">
-              <strong>
+          <Box
+            key={s.id}
+            pb={3}
+            borderBottom="1px solid #243049"
+            _last={{ borderBottom: 'none', pb: 0 }}
+          >
+            <Box mb={3}>
+              <Text fontWeight={600} color="#e8eef8" mb={1}>
                 {s.id}: {s.empty ? 'Empty' : s.label}
-              </strong>
-              {!s.empty && s.meta ? (
-                <span className="muted">
-                  {s.meta.companyName} · T{s.meta.turn} · {fmt(s.meta.credits)}{' '}
-                  cr · {s.meta.planet}
-                  {s.meta.runMode === 'daily' ? ' · Daily' : ''}
-                </span>
-              ) : (
-                <span className="muted">No save</span>
-              )}
-            </div>
-            <div className="quest-actions">
-              <button
-                type="button"
-                className="btn btn-fuel btn-xs"
+              </Text>
+              <Text color="#8b9bb8" fontSize="0.85rem">
+                {!s.empty && s.meta ? (
+                  <>
+                    {s.meta.companyName} · T{s.meta.turn} · {fmt(s.meta.credits)}{' '}
+                    cr · {s.meta.planet}
+                    {s.meta.runMode === 'daily' ? ' · Daily' : ''}
+                  </>
+                ) : (
+                  'No save'
+                )}
+              </Text>
+            </Box>
+            <HStack gap={2} justify="flex-end">
+              <Button
+                size="xs"
+                bg="#f6e05e"
+                color="#070b14"
+                _hover={{ bg: '#e6d04a' }}
                 onClick={() => {
                   const r = onSaveSlot(s.id, label || `Slot ${s.id}`);
                   refresh();
@@ -56,33 +73,41 @@ export default function SaveSlotsPanel({ onSaveSlot, onLoadSlot, onDeleteSlot })
                 }}
               >
                 💾 Save
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-xs"
+              </Button>
+              <Button
+                size="xs"
+                bg="#4cc9f0"
+                color="#070b14"
+                _hover={{ bg: '#3ab8dd' }}
                 disabled={s.empty}
+                opacity={s.empty ? 0.5 : 1}
+                cursor={s.empty ? 'not-allowed' : 'pointer'}
                 onClick={() => {
                   onLoadSlot(s.id);
                   refresh();
                 }}
               >
                 📂 Load
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-xs"
+              </Button>
+              <Button
+                size="xs"
+                bg="#243049"
+                color="#e8eef8"
+                _hover={{ bg: '#2f3f5a' }}
                 disabled={s.empty}
+                opacity={s.empty ? 0.5 : 1}
+                cursor={s.empty ? 'not-allowed' : 'pointer'}
                 onClick={() => {
                   onDeleteSlot(s.id);
                   refresh();
                 }}
               >
                 🗑️ Clear
-              </button>
-            </div>
-          </li>
+              </Button>
+            </HStack>
+          </Box>
         ))}
-      </ul>
-    </section>
+      </VStack>
+    </GamePanel>
   );
 }

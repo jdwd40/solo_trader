@@ -1,42 +1,54 @@
+import { Box, Text, VStack, VisuallyHidden } from '@chakra-ui/react';
 import { PLANETS } from '../data/gameData';
+import GamePanel from './GamePanel';
 
 export default function DemandBoard({ demandEvents }) {
   const events = demandEvents || [];
 
   return (
-    <section className="panel demand-panel">
-      <div className="panel-header">
-        <h2>📊 Sector Demand</h2>
-        <span className="badge muted-badge">{events.length} active</span>
-      </div>
-
+    <GamePanel
+      title="Sector Demand"
+      icon="📊"
+      badge={`${events.length} active`}
+      badgeMuted
+    >
       {events.length === 0 ? (
-        <p className="muted empty-cargo">
+        <Text color="#8b9bb8">
           No shortages or surpluses right now. Keep jumping — news travels fast.
-        </p>
+        </Text>
       ) : (
-        <ul className="demand-list">
+        <VStack gap={3} align="stretch" mb={4}>
           {events.map((ev) => (
-            <li key={ev.id} className={`demand-item ${ev.type}`}>
-              <span className="demand-type">
+            <Box
+              key={ev.id}
+              pb={3}
+              borderBottom="1px solid #243049"
+              _last={{ borderBottom: 'none', pb: 0 }}
+            >
+              <Text
+                fontSize="0.8rem"
+                fontWeight={600}
+                color={ev.type === 'shortage' ? '#2dd4a8' : '#f0a04b'}
+                mb={1}
+              >
                 {ev.type === 'shortage' ? '📈 Shortage' : '📉 Surplus'}
-              </span>
-              <strong>
+              </Text>
+              <Text fontWeight={600} color="#e8eef8" mb={1}>
                 {ev.commodity} · {ev.planet}
-              </strong>
-              <span className="muted">
+              </Text>
+              <Text color="#8b9bb8" fontSize="0.85rem">
                 ×{ev.factor} · {ev.turnsLeft} jump
                 {ev.turnsLeft === 1 ? '' : 's'} left
-              </span>
-            </li>
+              </Text>
+            </Box>
           ))}
-        </ul>
+        </VStack>
       )}
 
-      <p className="demand-specialties muted">
+      <Text color="#8b9bb8" fontSize="0.8rem">
         Hubs: Food@Earthport · Ore@Mars · Tech@Nova · Luxury@Vega · Fuel@Rim
-      </p>
-      <p className="sr-only">Planets: {PLANETS.join(', ')}</p>
-    </section>
+      </Text>
+      <VisuallyHidden>Planets: {PLANETS.join(', ')}</VisuallyHidden>
+    </GamePanel>
   );
 }

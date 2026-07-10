@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Box, Button, Flex, Input, Text, VStack } from '@chakra-ui/react';
 import { CONTRABAND } from '../data/gameData';
 import {
   cargoUsed,
@@ -7,6 +8,7 @@ import {
   isBlackMarketPlanet,
   maxBuyQty,
 } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function BlackMarketPanel({ state, onBuy, onSell }) {
   const [qty, setQty] = useState(1);
@@ -20,98 +22,117 @@ export default function BlackMarketPanel({ state, onBuy, onSell }) {
 
   if (!open) {
     return (
-      <section className="panel black-market-panel">
-        <div className="panel-header">
-          <h2>🕶️ Black Market</h2>
-          <span className="badge muted-badge">Closed</span>
-        </div>
-        <p className="muted intel-blurb">
+      <GamePanel
+        title="Black Market"
+        icon="🕶️"
+        badge="Closed"
+        badgeMuted
+      >
+        <Text color="#8b9bb8" fontSize="0.9rem">
           No fence on {state.currentPlanet}. Try{' '}
-          <strong>Outer Rim Depot</strong> or <strong>Vega Station</strong>.
+          <Text as="strong" color="#e8eef8">Outer Rim Depot</Text> or <Text as="strong" color="#e8eef8">Vega Station</Text>.
           {owned > 0 && (
             <>
               {' '}
-              You are carrying <strong>{owned}</strong> Contraband — patrol risk
+              You are carrying <Text as="strong" color="#e8eef8">{owned}</Text> Contraband — patrol risk
               ~{riskPct}% next jump.
             </>
           )}
-        </p>
-      </section>
+        </Text>
+      </GamePanel>
     );
   }
 
   return (
-    <section className="panel black-market-panel">
-      <div className="panel-header">
-        <h2>🕶️ Black Market</h2>
-        <span className="badge">Open</span>
-      </div>
+    <GamePanel
+      title="Black Market"
+      icon="🕶️"
+      badge="Open"
+      badgeMuted={false}
+    >
+      <VStack align="stretch" gap={3}>
+        <Text color="#8b9bb8" fontSize="0.9rem">
+          Contraband trades hurt reputation. Customs may seize cargo in transit.
+        </Text>
 
-      <p className="muted intel-blurb">
-        Contraband trades hurt reputation. Customs may seize cargo in transit.
-      </p>
+        <VStack gap={1} fontSize="0.9rem" color="#e8eef8">
+          <Text>
+            💰 Price: <Text as="span" fontWeight="600">{fmt(price)}</Text>
+          </Text>
+          <Text>
+            📦 Owned: <Text as="span" fontWeight="600">{owned}</Text>
+          </Text>
+          <Text>
+            ⚠️ Jump risk:{' '}
+            <Text
+              as="span"
+              fontWeight="600"
+              color={riskPct > 25 ? '#f07178' : '#e8eef8'}
+            >
+              {riskPct}%
+            </Text>
+          </Text>
+        </VStack>
 
-      <div className="bm-stats">
-        <span>
-          💰 Price: <strong>{fmt(price)}</strong>
-        </span>
-        <span>
-          📦 Owned: <strong>{owned}</strong>
-        </span>
-        <span>
-          ⚠️ Jump risk:{' '}
-          <strong className={riskPct > 25 ? 'debt' : ''}>{riskPct}%</strong>
-        </span>
-      </div>
-
-      <div className="bm-actions">
-        <input
-          className="row-qty"
-          type="number"
-          min={1}
-          max={99}
-          value={qty}
-          disabled={state.gameOver}
-          onChange={(e) => setQty(e.target.value)}
-          aria-label="Contraband quantity"
-        />
-        <button
-          type="button"
-          className="btn btn-buy"
-          disabled={
-            state.gameOver ||
-            safeQty > maxBuy ||
-            maxBuy <= 0
-          }
-          onClick={() => onBuy(safeQty)}
-        >
-          ➕ Buy
-        </button>
-        <button
-          type="button"
-          className="btn btn-buy btn-xs"
-          disabled={state.gameOver || maxBuy <= 0}
-          onClick={() => onBuy(maxBuy)}
-        >
-          ⏫ Max
-        </button>
-        <button
-          type="button"
-          className="btn btn-sell"
-          disabled={state.gameOver || owned < safeQty}
-          onClick={() => onSell(safeQty)}
-        >
-          ➖ Sell
-        </button>
-        <button
-          type="button"
-          className="btn btn-sell btn-xs"
-          disabled={state.gameOver || owned <= 0}
-          onClick={() => onSell(owned)}
-        >
-          ⏬ All
-        </button>
-      </div>
-    </section>
+        <Flex gap={2} wrap="wrap">
+          <Input
+            type="number"
+            min={1}
+            max={99}
+            value={qty}
+            isDisabled={state.gameOver}
+            onChange={(e) => setQty(e.target.value)}
+            aria-label="Contraband quantity"
+            w="70px"
+            bg="#141e33"
+            border="1px solid #243049"
+            color="#e8eef8"
+            _focus={{ borderColor: '#4cc9f0' }}
+          />
+          <Button
+            bg="#2dd4a8"
+            color="#070b14"
+            _hover={{ bg: '#23b392' }}
+            isDisabled={
+              state.gameOver ||
+              safeQty > maxBuy ||
+              maxBuy <= 0
+            }
+            onClick={() => onBuy(safeQty)}
+          >
+            ➕ Buy
+          </Button>
+          <Button
+            size="xs"
+            bg="#2dd4a8"
+            color="#070b14"
+            _hover={{ bg: '#23b392' }}
+            isDisabled={state.gameOver || maxBuy <= 0}
+            onClick={() => onBuy(maxBuy)}
+          >
+            ⏫ Max
+          </Button>
+          <Button
+            bg="#f0a04b"
+            color="#070b14"
+            _hover={{ bg: '#dc9442' }}
+            isDisabled={state.gameOver || owned < safeQty}
+            onClick={() => onSell(safeQty)}
+          >
+            ➖ Sell
+          </Button>
+          <Button
+            size="xs"
+            bg="#f0a04b"
+            color="#070b14"
+            _hover={{ bg: '#dc9442' }}
+            isDisabled={state.gameOver || owned <= 0}
+            onClick={() => onSell(owned)}
+          >
+            ⏬ All
+          </Button>
+        </Flex>
+      </VStack>
+    </GamePanel>
   );
 }

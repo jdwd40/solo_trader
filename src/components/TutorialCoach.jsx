@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Box, VStack, HStack, Heading, Text, Button } from '@chakra-ui/react';
 import { TUTORIAL_KEY } from '../data/gameData';
 
 const STEPS = [
@@ -106,25 +107,80 @@ export default function TutorialCoach({
   }
 
   return (
-    <div className="tutorial-root" role="dialog" aria-label="Tutorial">
+    <Box
+      position="fixed"
+      top="0"
+      left="0"
+      right="0"
+      bottom="0"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      role="dialog"
+      aria-label="Tutorial"
+    >
+      {/* Spotlight Overlay */}
       {current.target && (
-        <div className={`tutorial-spotlight target-${current.target}`} />
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="rgba(7, 11, 20, 0.7)"
+          pointerEvents="none"
+          className={`tutorial-spotlight target-${current.target}`}
+        />
       )}
-      <div className="tutorial-card">
-        <p className="tutorial-kicker">
-          Coach · {step + 1}/{STEPS.length}
-        </p>
-        <h3>{current.title}</h3>
-        <p>{current.body}</p>
-        <div className="tutorial-actions">
-          <button type="button" className="btn btn-secondary" onClick={finish}>
-            Skip
-          </button>
-          <button type="button" className="btn btn-primary" onClick={next}>
-            {isLast ? 'Start trading' : 'Next'}
-          </button>
-        </div>
-      </div>
-    </div>
+
+      {/* Tutorial Card */}
+      <Box
+        bg="#0f1626"
+        borderRadius="8px"
+        p="2rem"
+        maxW="500px"
+        border="1px solid #243049"
+        position="relative"
+        zIndex="10"
+      >
+        <VStack gap="1.5rem" align="stretch">
+          {/* Header */}
+          <VStack gap="0.75rem" align="stretch">
+            <Text fontSize="sm" color="#8b9bb8" fontWeight="500">
+              Coach · {step + 1}/{STEPS.length}
+            </Text>
+            <Heading as="h3" fontSize="1.5rem" color="#e8eef8">
+              {current.title}
+            </Heading>
+          </VStack>
+
+          {/* Body */}
+          <Text color="#e8eef8" fontSize="1rem" lineHeight="1.6">
+            {current.body}
+          </Text>
+
+          {/* Actions */}
+          <HStack gap="1rem" justify="flex-end">
+            <Button
+              bg="#243049"
+              color="#e8eef8"
+              _hover={{ bg: "#2e4a7a" }}
+              onClick={finish}
+            >
+              Skip
+            </Button>
+            <Button
+              bg="#4cc9f0"
+              color="#070b14"
+              fontWeight="bold"
+              _hover={{ bg: "#3bb8dd" }}
+              onClick={next}
+            >
+              {isLast ? 'Start trading' : 'Next'}
+            </Button>
+          </HStack>
+        </VStack>
+      </Box>
+    </Box>
   );
 }

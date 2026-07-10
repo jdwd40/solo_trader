@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { VStack, HStack, Text, Button, Box } from '@chakra-ui/react';
 import { STOCK_INDICES } from '../data/gameData';
 import { fmt, marketBook, portfolioValue } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 /**
  * Sector Exchange — real bid/ask microstructure.
@@ -28,133 +30,211 @@ export default function StockMarket({
   const locked = state.gameOver || state.needsHullSelect;
 
   return (
-    <section className="panel stock-panel">
-      <div className="panel-header">
-        <h2>📈 Sector Exchange</h2>
-        <span className="badge">{fmt(total)} cr</span>
-      </div>
-      <p className="muted intel-blurb">
-        <strong>Take the ask</strong> to buy. <strong>Hit the bid</strong> to sell.
-        Or <strong>make a 2-way market</strong> — post both sides and let flow
-        trade against you on jumps (spread income, inventory risk).
-      </p>
+    <GamePanel
+      title="📈 Sector Exchange"
+      badge={fmt(total) + ' cr'}
+    >
+      <VStack gap={4} align="stretch">
+        {/* Description */}
+        <Text color="#8b9bb8" fontSize="sm">
+          <strong>Take the ask</strong> to buy. <strong>Hit the bid</strong> to sell.
+          Or <strong>make a 2-way market</strong> — post both sides and let flow
+          trade against you on jumps (spread income, inventory risk).
+        </Text>
 
-      <div className="futures-form stock-qty-row">
-        <label htmlFor="stock-qty" className="muted">
-          ⚡ Take size
-        </label>
-        <input
-          id="stock-qty"
-          className="row-qty"
-          type="number"
-          min={1}
-          max={99}
-          value={shares}
-          disabled={locked}
-          onChange={(e) => setShares(e.target.value)}
-        />
-        <label htmlFor="mm-qty" className="muted">
-          🏦 Quote size
-        </label>
-        <input
-          id="mm-qty"
-          className="row-qty"
-          type="number"
-          min={1}
-          max={99}
-          value={mmSize}
-          disabled={locked}
-          onChange={(e) => setMmSize(e.target.value)}
-        />
-      </div>
+        {/* Size inputs */}
+        <HStack gap={4} wrap="wrap">
+          <HStack gap={2} align="flex-end">
+            <Text color="#8b9bb8" fontSize="sm" whiteSpace="nowrap">
+              ⚡ Take size
+            </Text>
+            <input
+              id="stock-qty"
+              type="number"
+              min={1}
+              max={99}
+              value={shares}
+              disabled={locked}
+              onChange={(e) => setShares(e.target.value)}
+              style={{
+                background: '#141e33',
+                border: '1px solid #243049',
+                color: '#e8eef8',
+                padding: '8px 12px',
+                borderRadius: '6px',
+                width: '70px',
+                fontSize: '14px',
+              }}
+            />
+          </HStack>
+          <HStack gap={2} align="flex-end">
+            <Text color="#8b9bb8" fontSize="sm" whiteSpace="nowrap">
+              🏦 Quote size
+            </Text>
+            <input
+              id="mm-qty"
+              type="number"
+              min={1}
+              max={99}
+              value={mmSize}
+              disabled={locked}
+              onChange={(e) => setMmSize(e.target.value)}
+              style={{
+                background: '#141e33',
+                border: '1px solid #243049',
+                color: '#e8eef8',
+                padding: '8px 12px',
+                borderRadius: '6px',
+                width: '70px',
+                fontSize: '14px',
+              }}
+            />
+          </HStack>
+        </HStack>
 
-      <ul className="stock-list">
-        {Object.values(STOCK_INDICES).map((idx) => {
-          const mid = prices[idx.id] ?? idx.base;
-          const book = marketBook(mid, state.season, idx.id);
-          const owned = portfolio[idx.id] || 0;
-          const takeCost = book.ask * qty;
-          const hitRevenue = book.bid * qty;
-          const q = quotes[idx.id];
-          const making = Boolean(q && (q.bidSize > 0 || q.askSize > 0));
+        {/* Stock list */}
+        <VStack gap={3} align="stretch">
+          {Object.values(STOCK_INDICES).map((idx) => {
+            const mid = prices[idx.id] ?? idx.base;
+            const book = marketBook(mid, state.season, idx.id);
+            const owned = portfolio[idx.id] || 0;
+            const takeCost = book.ask * qty;
+            const hitRevenue = book.bid * qty;
+            const q = quotes[idx.id];
+            const making = Boolean(q && (q.bidSize > 0 || q.askSize > 0));
 
-          return (
-            <li key={idx.id} className={making ? 'is-quoting' : ''}>
-              <div className="stock-main">
-                <strong>{idx.name}</strong>
-                <span className="muted">{idx.blurb}</span>
-                <div className="stock-book" aria-label="Bid ask book">
-                  <span className="book-bid" title="Market bid — hit this to sell">
-                    Bid <strong>{fmt(book.bid)}</strong>
-                  </span>
-                  <span className="book-mid" title="Mid / last">
-                    Mid {fmt(book.mid)}
-                  </span>
-                  <span className="book-ask" title="Market ask — take this to buy">
-                    Ask <strong>{fmt(book.ask)}</strong>
-                  </span>
-                  <span className="book-spread muted">
-                    Spr {fmt(book.spread)}
-                  </span>
-                </div>
-                <span className="upgrade-meta">
-                  Own {owned}
-                  {making
-                    ? ` · quoting ${q.bidSize || 0}×${q.askSize || 0}`
-                    : ''}
-                </span>
-              </div>
+            return (
+              <Box
+                key={idx.id}
+                p={3}
+                bg={making ? '#1a2537' : '#141e33'}
+                borderRadius="6px"
+                borderLeft={making ? '3px solid #4cc9f0' : 'none'}
+              >
+                <VStack gap={3} align="stretch">
+                  {/* Stock info */}
+                  <VStack gap={1} align="stretch">
+                    <Text fontSize="sm" fontWeight="bold" color="#e8eef8">
+                      {idx.name}
+                    </Text>
+                    <Text fontSize="xs" color="#8b9bb8">
+                      {idx.blurb}
+                    </Text>
+                  </VStack>
 
-              <div className="stock-actions">
-                <div className="quest-actions">
-                  <button
-                    type="button"
-                    className="btn btn-buy btn-xs"
-                    disabled={locked || takeCost > state.credits}
-                    title={`Take ask: buy ${qty} @ ${fmt(book.ask)} = ${fmt(takeCost)} cr`}
-                    onClick={() => onBuy(idx.id, qty)}
+                  {/* Order book */}
+                  <HStack
+                    gap={2}
+                    justify="space-between"
+                    p={2}
+                    bg="#0f1626"
+                    borderRadius="4px"
+                    fontSize="xs"
+                    fontFamily="mono"
                   >
-                    📈 Take ask
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sell btn-xs"
-                    disabled={locked || owned < qty}
-                    title={`Hit bid: sell ${qty} @ ${fmt(book.bid)} = ${fmt(hitRevenue)} cr`}
-                    onClick={() => onSell(idx.id, qty)}
-                  >
-                    📉 Hit bid
-                  </button>
-                </div>
-                <div className="quest-actions">
-                  <button
-                    type="button"
-                    className="btn btn-fuel btn-xs"
-                    disabled={
-                      locked ||
-                      owned < quoteSize ||
-                      book.bid * quoteSize > state.credits
-                    }
-                    title={`Post 2-way: bid ${quoteSize}@${fmt(book.bid)} · ask ${quoteSize}@${fmt(book.ask)}. Fills on jumps.`}
-                    onClick={() => onPostQuote(idx.id, quoteSize, quoteSize)}
-                  >
-                    🏦 Make 2-way
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-xs"
-                    disabled={locked || !making}
-                    title="Cancel resting quotes"
-                    onClick={() => onPullQuote(idx.id)}
-                  >
-                    ✖️ Pull
-                  </button>
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+                    <HStack gap={1}>
+                      <Text color="#2dd4a8" fontWeight="bold" title="Market bid — hit this to sell">
+                        Bid {fmt(book.bid)}
+                      </Text>
+                    </HStack>
+                    <HStack gap={1}>
+                      <Text color="#e8eef8" title="Mid / last">
+                        Mid {fmt(book.mid)}
+                      </Text>
+                    </HStack>
+                    <HStack gap={1}>
+                      <Text color="#f0a04b" fontWeight="bold" title="Market ask — take this to buy">
+                        Ask {fmt(book.ask)}
+                      </Text>
+                    </HStack>
+                    <HStack gap={1}>
+                      <Text color="#8b9bb8">
+                        Spr {fmt(book.spread)}
+                      </Text>
+                    </HStack>
+                  </HStack>
+
+                  {/* Position & quote status */}
+                  <Text fontSize="xs" color="#8b9bb8" fontFamily="mono">
+                    Own {owned}
+                    {making
+                      ? ` · quoting ${q.bidSize || 0}×${q.askSize || 0}`
+                      : ''}
+                  </Text>
+
+                  {/* Action buttons */}
+                  <VStack gap={2} align="stretch">
+                    <HStack gap={2}>
+                      <Button
+                        size="xs"
+                        isDisabled={locked || takeCost > state.credits}
+                        title={`Take ask: buy ${qty} @ ${fmt(book.ask)} = ${fmt(takeCost)} cr`}
+                        onClick={() => onBuy(idx.id, qty)}
+                        bg="#2dd4a8"
+                        color="#070b14"
+                        _hover={{ bg: '#3fe4b8' }}
+                        _disabled={{ opacity: 0.5, cursor: 'not-allowed' }}
+                        fontWeight="bold"
+                        flex={1}
+                      >
+                        📈 Take ask
+                      </Button>
+                      <Button
+                        size="xs"
+                        isDisabled={locked || owned < qty}
+                        title={`Hit bid: sell ${qty} @ ${fmt(book.bid)} = ${fmt(hitRevenue)} cr`}
+                        onClick={() => onSell(idx.id, qty)}
+                        bg="#f0a04b"
+                        color="#070b14"
+                        _hover={{ bg: '#fdb05d' }}
+                        _disabled={{ opacity: 0.5, cursor: 'not-allowed' }}
+                        fontWeight="bold"
+                        flex={1}
+                      >
+                        📉 Hit bid
+                      </Button>
+                    </HStack>
+                    <HStack gap={2}>
+                      <Button
+                        size="xs"
+                        isDisabled={
+                          locked ||
+                          owned < quoteSize ||
+                          book.bid * quoteSize > state.credits
+                        }
+                        title={`Post 2-way: bid ${quoteSize}@${fmt(book.bid)} · ask ${quoteSize}@${fmt(book.ask)}. Fills on jumps.`}
+                        onClick={() => onPostQuote(idx.id, quoteSize, quoteSize)}
+                        bg="#8b9bb8"
+                        color="#070b14"
+                        _hover={{ bg: '#a8bcd4' }}
+                        _disabled={{ opacity: 0.5, cursor: 'not-allowed' }}
+                        fontWeight="bold"
+                        flex={1}
+                      >
+                        🏦 Make 2-way
+                      </Button>
+                      <Button
+                        size="xs"
+                        isDisabled={locked || !making}
+                        title="Cancel resting quotes"
+                        onClick={() => onPullQuote(idx.id)}
+                        bg="#243049"
+                        color="#e8eef8"
+                        _hover={{ bg: '#2e4a7a' }}
+                        _disabled={{ opacity: 0.5, cursor: 'not-allowed' }}
+                        fontWeight="bold"
+                        flex={1}
+                      >
+                        ✖️ Pull
+                      </Button>
+                    </HStack>
+                  </VStack>
+                </VStack>
+              </Box>
+            );
+          })}
+        </VStack>
+      </VStack>
+    </GamePanel>
   );
 }

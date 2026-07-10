@@ -1,4 +1,6 @@
+import { Box, Button, Text, VStack } from '@chakra-ui/react';
 import { fmt, getMissionProgress } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function MissionsPanel({ state, onClaim }) {
   if (state.missionsEnabled === false) return null;
@@ -6,42 +8,56 @@ export default function MissionsPanel({ state, onClaim }) {
   const open = missions.filter((m) => !m.claimed);
 
   return (
-    <section className="panel missions-panel">
-      <div className="panel-header">
-        <h2>🎯 Missions</h2>
-        <span className="badge muted-badge">
-          {missions.filter((m) => m.claimed).length}/{missions.length}
-        </span>
-      </div>
-      <p className="muted intel-blurb">
+    <GamePanel
+      title="Missions"
+      icon="🎯"
+      badge={`${missions.filter((m) => m.claimed).length}/${missions.length}`}
+      badgeMuted
+    >
+      <Text color="#8b9bb8" mb={4} fontSize="0.9rem">
         Optional first-run track. Claim cash when objectives complete.
-      </p>
+      </Text>
       {open.length === 0 ? (
-        <p className="muted empty-cargo">All mission rewards claimed. Fly free.</p>
+        <Text color="#8b9bb8">All mission rewards claimed. Fly free.</Text>
       ) : (
-        <ul className="mission-list">
+        <VStack gap={3} align="stretch">
           {open.map((m) => (
-            <li key={m.id} className={m.done ? 'done' : ''}>
-              <div>
-                <strong>
+            <Box
+              key={m.id}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="flex-start"
+              gap={3}
+              pb={3}
+              borderBottom="1px solid #243049"
+              _last={{ borderBottom: 'none', pb: 0 }}
+            >
+              <Box flex={1}>
+                <Text fontWeight={600} color="#e8eef8" mb={1}>
                   {m.done ? '✅ ' : '○ '}
                   {m.title}
-                </strong>
-                <span className="muted">{m.desc}</span>
-                <span className="upgrade-meta">+{fmt(m.reward)} cr</span>
-              </div>
-              <button
-                type="button"
-                className="btn btn-buy btn-xs"
+                </Text>
+                <Text color="#8b9bb8" fontSize="0.85rem" mb={1}>
+                  {m.desc}
+                </Text>
+                <Text color="#2dd4a8" fontSize="0.85rem" fontWeight={500}>
+                  +{fmt(m.reward)} cr
+                </Text>
+              </Box>
+              <Button
+                size="xs"
+                bg="#2dd4a8"
+                color="#070b14"
+                _hover={{ bg: '#20c497' }}
                 disabled={!m.claimable || state.gameOver || state.needsHullSelect}
                 onClick={() => onClaim(m.id)}
               >
                 🎁 Claim
-              </button>
-            </li>
+              </Button>
+            </Box>
           ))}
-        </ul>
+        </VStack>
       )}
-    </section>
+    </GamePanel>
   );
 }

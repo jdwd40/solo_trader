@@ -1,5 +1,7 @@
+import { Box, Flex, Text, VStack } from '@chakra-ui/react';
 import { COMMODITIES, COMMODITY_ICONS, CONTRABAND } from '../data/gameData';
 import { cargoUsed, cargoValue, fmt } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function CargoPanel({ state }) {
   const used = cargoUsed(state.cargo);
@@ -9,43 +11,68 @@ export default function CargoPanel({ state }) {
   const pct = Math.min(100, Math.round((used / state.cargoCapacity) * 100));
 
   return (
-    <section className="panel cargo-panel">
-      <div className="panel-header">
-        <h2>📦 Cargo Hold</h2>
-        <span className="badge">
-          {used} / {state.cargoCapacity}
-        </span>
-      </div>
-
-      <div className="cargo-bar" aria-hidden="true">
-        <div className="cargo-bar-fill" style={{ width: `${pct}%` }} />
-      </div>
+    <GamePanel title="Cargo Hold" badge={`${used} / ${state.cargoCapacity}`}>
+      {/* Cargo bar */}
+      <Box
+        h="8px"
+        bg="#070b14"
+        borderRadius="full"
+        overflow="hidden"
+        mb={3}
+        border="1px solid"
+        borderColor="#243049"
+        aria-hidden="true"
+      >
+        <Box
+          h="100%"
+          bg="linear-gradient(90deg, #4cc9f0, #3ab8e0)"
+          borderRadius="full"
+          transition="width 0.2s ease"
+          w={`${pct}%`}
+        />
+      </Box>
 
       {filled.length === 0 ? (
-        <p className="muted empty-cargo">Hold is empty. Buy goods at the market.</p>
+        <Text color="#8b9bb8" fontSize="0.9rem" mb={3}>Hold is empty. Buy goods at the market.</Text>
       ) : (
-        <ul className="cargo-list">
+        <VStack as="ul" listStyleType="none" m={0} p={0} gap={1.5} align="stretch">
           {filled.map((c) => (
-            <li key={c} className={c === CONTRABAND ? 'is-contraband' : ''}>
-              <span className="cargo-name">
-                <span className="icon-label" aria-hidden="true">
-                  {COMMODITY_ICONS[c] || '📦'}
-                </span>{' '}
-                {c}
-              </span>
-              <span className="cargo-qty">×{state.cargo[c]}</span>
-              <span className="cargo-val">
-                {fmt(state.cargo[c] * (prices[c] || 0))} cr
-              </span>
-            </li>
+            <Flex
+              as="li"
+              key={c}
+              align="center"
+              gap={3}
+              px={2.5}
+              py={2}
+              bg="#070b14"
+              borderRadius="8px"
+              border="1px solid"
+              borderColor={c === CONTRABAND ? 'rgba(240, 113, 120, 0.4)' : '#243049'}
+              bgColor={c === CONTRABAND ? 'rgba(240, 113, 120, 0.06)' : '#070b14'}
+              fontSize="0.9rem"
+            >
+              <Text flex={1}>
+                <Text as="span" aria-hidden="true">{COMMODITY_ICONS[c] || '📦'}</Text> {c}
+              </Text>
+              <Text fontFamily="mono" color="#4cc9f0">x{state.cargo[c]}</Text>
+              <Text fontFamily="mono" color="#8b9bb8">{fmt(state.cargo[c] * (prices[c] || 0))} cr</Text>
+            </Flex>
           ))}
-        </ul>
+        </VStack>
       )}
 
-      <div className="cargo-footer">
-        <span>💵 Market value</span>
-        <strong>{fmt(value)} cr</strong>
-      </div>
-    </section>
+      <Flex
+        justify="space-between"
+        mt={3}
+        pt={3}
+        borderTop="1px solid"
+        borderColor="#243049"
+        fontSize="0.9rem"
+        color="#8b9bb8"
+      >
+        <Text>Market value</Text>
+        <Text as="strong" color="#e8eef8" fontFamily="mono">{fmt(value)} cr</Text>
+      </Flex>
+    </GamePanel>
   );
 }

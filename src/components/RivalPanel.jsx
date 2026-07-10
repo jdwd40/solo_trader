@@ -1,30 +1,41 @@
+import { Box, Text, VStack } from '@chakra-ui/react';
 import { fmt } from '../utils/gameLogic';
+import GamePanel from './GamePanel';
 
 export default function RivalPanel({ rival }) {
   if (!rival) return null;
 
   return (
-    <section className="panel rival-panel">
-      <div className="panel-header">
-        <h2>🛰️ Sector Rival</h2>
-        <span className="badge muted-badge">NPC</span>
-      </div>
-      <p className="rival-name">
-        <strong>{rival.name}</strong>
-      </p>
-      <ul className="rival-stats">
-        <li>
-          <span className="muted">📍 Last seen</span>
-          <strong>{rival.planet}</strong>
-        </li>
-        <li>
-          <span className="muted">💰 Est. capital</span>
-          <strong>{fmt(rival.credits)} cr</strong>
-        </li>
-      </ul>
-      <p className="muted intel-blurb">
+    <GamePanel
+      title="Sector Rival"
+      icon="🛰️"
+      badge="NPC"
+      badgeMuted
+    >
+      <Text fontWeight={600} color="#e8eef8" mb={3} fontSize="1rem">
+        {rival.name}
+      </Text>
+      <VStack gap={2} align="stretch" mb={4}>
+        <Box>
+          <Text color="#8b9bb8" fontSize="0.85rem">
+            📍 Last seen
+          </Text>
+          <Text fontWeight={600} color="#e8eef8">
+            {rival.planet}
+          </Text>
+        </Box>
+        <Box>
+          <Text color="#8b9bb8" fontSize="0.85rem">
+            💰 Est. capital
+          </Text>
+          <Text fontWeight={600} color="#e8eef8">
+            {fmt(rival.credits)} cr
+          </Text>
+        </Box>
+      </VStack>
+      <Text color="#8b9bb8" fontSize="0.9rem">
         Rivals jump toward shortages and steal juicy runs. Watch the news ticker.
-      </p>
-    </section>
+      </Text>
+    </GamePanel>
   );
 }
